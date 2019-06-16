@@ -6,7 +6,7 @@ import Home from './views/home'
 Vue.use(vueRouter)
 
 export default new vueRouter({
-    mode: 'history',
+    mode: 'hash',
     routes: [
         {
             path: '/range',

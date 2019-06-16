@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import Range from 'vue-time-range-picker'
-import Demo from './components/demo.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+// import Range from 'vue-time-range-picker'
+// import Demo from './components/demo.vue'
 import { mapModules, mapRules } from 'vuet'
 export default {
   mixins: [
@@ -35,9 +35,9 @@ export default {
       this.list = data.list
     }
   },
-  components: {
-    HelloWorld, Demo, Range
-  },
+  // components: {
+  //   Range
+  // },
   provide () {
     return {
       title: 'app'
