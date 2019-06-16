@@ -14,7 +14,7 @@
     "vue-ls": "^3.2.1",
     "vue-meta": "^1.6.0",
     "vue-router": "^3.0.6",
-    "vue-time-range-picker": "^1.0.6",
+    "vue-time-range-picker": "^1.0.8",
     "vuet": "^1.0.3"
   },
   "devDependencies": {

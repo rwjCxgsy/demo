@@ -9,6 +9,10 @@ export default new vueRouter({
     mode: 'hash',
     routes: [
         {
+            path: '/',
+            redirect: '/home'
+        },
+        {
             path: '/range',
             component: Range,
         },

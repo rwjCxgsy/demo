@@ -7992,10 +7992,10 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-time-range-picker@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/vue-time-range-picker/-/vue-time-range-picker-1.0.6.tgz#29a732b6fd2fd747bf0b7ac7df2f6675f5bcf0fb"
-  integrity sha512-JNQKsJBt9lFS1poJmGSIvuSerPr/1EL+QpwvF3mdXBnfpUgUBGD16Hla2NrHJDsTq4tSyXRSeDrT+h1+E34yMA==
+vue-time-range-picker@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/vue-time-range-picker/-/vue-time-range-picker-1.0.8.tgz#38e4a44a78c233cebac0990bd6627202239b51de"
+  integrity sha512-KbStJWUlODlsXf6V8b5/kZDcnceedH18cTyTZHXXXn3MpobHMS1Cya8RTh17x4ok8pH2sF+ztDaW5P+oA63Dgw==
   dependencies:
     "@vue/cli-service-global" "^3.8.3"
     less "^3.9.0"
