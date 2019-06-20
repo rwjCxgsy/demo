@@ -66,9 +66,14 @@ export default {
             ctx = this.$refs.map.getContext('2d')
             // 线路一
             Object.keys(subWay).forEach(v => {
-                const {lineColor, list} = subWay[v]
-                console.log(lineColor, list)
+                const {lineColor, list, type} = subWay[v]
                 const _list = Object.keys(list)
+                console.log(type)
+                if (type === 0) {
+                    const last = list[_list[_list.length - 1]].position
+                    console.log(last)
+                    prev = {x: last[0], y: last[1]}
+                }
                 _list.forEach(v => {
                     const station = list[v]
                     const [x, y] = station.position

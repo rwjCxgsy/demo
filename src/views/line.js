@@ -513,6 +513,7 @@ const line7 = {
         xnjd: {
             name: '西南交大',
             position: [6, 3],
+            offset: [0, 16]
         },
     }
 }
