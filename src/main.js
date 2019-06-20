@@ -4,10 +4,11 @@ import VueMeta from 'vue-meta';
 import Cookies from 'js-cookie'
 import Storage from 'vue-ls';
 import Vuet from 'vuet'
- 
+
 Vue.use(Vuet)
 import router from './router'
- 
+import './plugins/element.js'
+
 const vuet = new Vuet({
   // 实例的选项，详情往下看
 })
@@ -46,6 +47,7 @@ Vue.use(VueMeta, {
 
 Cookies.set('name_sb', 'value_sb', { expires: 365 });
 
+console.log('element-ui')
 Vue.config.productionTip = false
 
 new Vue({
