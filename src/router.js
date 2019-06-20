@@ -19,6 +19,10 @@ export default new vueRouter({
         {
             path: '/home',
             component: Home,
+        },
+        {
+            path: '/cdsub',
+            component: () => import('./views/cdsub'),
         }
     ]
 })
