@@ -15,13 +15,13 @@ const line1 = {
             srot: 2,
             name: '升仙湖',
             position: [9, 2],
-            next: ['hcbz', 'hcbz']
+            next: ['wjn', 'hcbz']
         },
         hcbz: {
             srot: 3,
             name: '火车北站',
             position: [9, 3],
-            next: ['sxf', 'rmbl', 'xnjd', 'smq'],
+            next: ['sxf', 'rmbl', 'bzxel', 'smq'],
             offset: [0, 16]
         },
         rmbl: {
@@ -40,14 +40,14 @@ const line1 = {
             srot: 6,
             name: '骡马市',
             position: [9, 6],
-            next: ['wsy', 'tfgc', 'tsnl', 'kzxz'],
+            next: ['wsy', 'tfgc', 'kzxz', 'tsnl'],
             offset: [0, 16]
         },
         tfgc: {
             srot: 7,
             name: '天府广场',
             position: [9, 8],
-            next: ['jjbg', 'rmgy', 'cxl']
+            next: ['lms', 'jjbg', 'rmgy', 'cxl']
         },
         jjbg: {
             srot: 8,
@@ -69,7 +69,7 @@ const line1 = {
             srot: 9,
             name: '省体育馆',
             position: [9, 13],
-            next: ['hxb', 'njq', 'mzq', 'ygm']
+            next: ['hxb', 'njq', 'ygm', 'mzq']
         },
         njq: {
             srot: 11,
@@ -87,7 +87,7 @@ const line1 = {
             srot: 13,
             name: '火车南站',
             position: [9, 16],
-            next: ['txl', 'gx', 'swy', 'sxs'],
+            next: ['txl', 'gx', 'sxs', 'swy'],
             offset: [0, 16]
         },
         gx: {
@@ -135,7 +135,7 @@ const line2 = {
             name: '中医大省医院',
             srot: 5,
             position: [6, 6],
-            next: ['bgl', 'zydsyy', 'ctbl', 'kzxz'],
+            next: ['bgl', 'thm', 'ctbl', 'kzxz'],
             offset: [0, -16]
         },
         thm: {
@@ -156,13 +156,13 @@ const line2 = {
             name: '天府广场',
             srot: 8,
             position: [9, 8],
-            next: ['rmgy', 'cxl', 'lms', 'jjbg'],
+            next: ['rmgy', 'cxl', 'jjbg', 'lms'],
         },
         cxl: {
             name: '春熙路',
             srot: 9,
             position: [10, 9],
-            next: ['tfgc', 'dmdq', 'seyy', 'xnm'],
+            next: ['tfgc', 'dmdq', 'xnm', 'seyy'],
         },
         dmdq: {
             name: '东门大桥',
@@ -202,7 +202,7 @@ const line2 = {
             name: '成都东客站',
             srot: 15,
             position: [16, 13],
-            next: ['tzsgy', 'cylj', 'yhl', 'dg'],
+            next: ['tzsgy', 'cylj', 'dg', 'yhl'],
         },
         cylj: {
             name: '成渝立交',
@@ -255,7 +255,7 @@ const line3 = {
             name: '市二医院',
             srot: 1,
             position: [12, 7],
-            next: ['hxl', 'cxl', 'lms', 'ysl'],
+            next: ['hxl', 'cxl', 'tsnl', 'ysl'],
         },
         cxl: {
             name: '春熙路',
@@ -335,7 +335,7 @@ const line4 = {
             name: '文化宫',
             position: [2, 6],
             offset: [0, 16],
-            next: ['qjxl', 'xncd', 'jsbwg', 'dpl']
+            next: ['qjxl', 'xncd', 'dpl', 'jsbwg']
         },
         xncd: {
             name: '西南财大',
@@ -352,7 +352,7 @@ const line4 = {
         zydsyy: {
             name: '中医大省医院',
             position: [7, 6],
-            next: ['ctbl', 'kzxz', 'ggl', 'thm'],
+            next: ['ctbl', 'kzxz', 'thm', 'ggl'],
         },
         kzxz: {
             name: '宽窄巷子',
@@ -364,7 +364,7 @@ const line4 = {
         lms: {
             name: '骡马市',
             position: [9, 6],
-            next: ['kzxz', 'tsnl', 'wsy', 'tfgc']
+            next: ['kzxz', 'tsnl', 'tfgc', 'wsy']
         },
         tsnl: {
             name: '太升南路',
@@ -374,7 +374,7 @@ const line4 = {
         seyy: {
             name: '市二医院',
             position: [12, 7],
-            next: ['tsnl', 'ysl', 'hxl', 'cxl']
+            next: ['tsnl', 'ysl', 'cxl', 'hxl']
         },
         ysl: {
             name: '玉双路',
@@ -398,7 +398,7 @@ const line4 = {
             name: '槐树站',
             position: [16, 8],
             offset: [0, 16],
-            next: ['wnc', 'll', 'sdl', 'yhl']
+            next: ['wnc', 'll', 'yhl', 'sdl']
         },
         ll: {
             name: '来龙',
@@ -419,12 +419,12 @@ const line7 = {
         hcbz: {
             name: '火车北站',
             position: [9, 3],
-            next: ['bzxel', 'smq', 'sxf', 'rmbl']
+            next: ['bzxel', 'smq', 'rmbl', 'sxf']
         },
         smq: {
             name: '驷马桥',
             position: [12, 3],
-            next: ['hcbz', 'fql', 'zjsnl', 'ljt']
+            next: ['hcbz', 'fql', 'ljt', 'zjsnl']
         },
         fql: {
             name: '府青路',
@@ -460,7 +460,7 @@ const line7 = {
         hsz: {
             name: '槐树站',
             position: [16, 8],
-            next: ['sdl', 'yhl', 'll', 'wnc']
+            next: ['sdl', 'yhl', 'wnc', 'll']
         },
         yhl: {
             name: '迎辉路',
@@ -553,7 +553,7 @@ const line7 = {
         yptx: {
             name: '一品天下',
             position: [3, 3],
-            next: ['jsbwg', 'cdz', 'yxlj', 'shld']
+            next: ['jsbwg', 'cdz', 'shld', 'yxlj']
         },
         cdz: {
             name: '茶店子',

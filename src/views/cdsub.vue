@@ -9,7 +9,7 @@
                             <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
                         </Select>
                         <Select v-model="startStation" placeholder="请选择车站">
-                            <Option v-for="(item, index) in startList" :key="index" :label="item.name" :value="index" />
+                            <Option v-for="(item, index) in startList" :disabled="index === endStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
                     <form-item label="选择结束站">
@@ -17,11 +17,11 @@
                             <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
                         </Select>
                         <Select v-model="endStation" placeholder="请选择车站">
-                            <Option v-for="(item, index) in endList" :key="index" :label="item.name" :value="index" />
+                            <Option v-for="(item, index) in endList" :disabled="index === startStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
                     <form-item label="计算最短路线">
-                        <Button>计算路程</Button>
+                        <Button type="primary" @click="planning" :disabled="isplan">计算路程</Button>
                     </form-item>
                 </Form>
             </div>
@@ -31,7 +31,7 @@
 
 <script>
 import subWay from './line'
-import {Select, Option, Form, FormItem, Button} from 'element-ui'
+import {Select, Option, Form, FormItem, Button, Message} from 'element-ui'
 let ctx = null
 let prev = {x: null, y: null}
 const isDraw = []
@@ -49,7 +49,64 @@ export default {
             endList: []
         }
     },
+    computed: {
+        isplan () {
+            const {startVal, endVal, startStation, endStation} = this
+            if (!(startStation && endStation)) {
+                return true
+            }
+            if (startStation === endStation) {
+                return true
+            }
+            return false
+        }
+    },
     methods: {
+        planning () {
+            const {startVal, endVal, startStation, endStation} = this
+            let start = subWay[startVal].list[startStation]
+            let end = subWay[endVal].list[endStation]
+            console.log(start, end)
+            let next = null
+            let book = []
+            let min = 99999
+            const find = (station) => {
+                let result = null
+                for (const key in subWay) {
+                    if (subWay.hasOwnProperty(key)) {
+                        const element = subWay[key];
+                        const _result = element.list[station]
+                        if (_result) {
+                            result = _result
+                            break
+                        }
+                    }
+                }
+                if (!result) {
+                    console.log(station)
+                }
+                return result
+            }
+            function jisuan (station, step) {
+                if (station.name === end.name) {
+                    if (step < min) {
+                        min = step
+                    }
+                    return false
+                }
+                for (let i = 0; i < station.next.length; i++) {
+                    let n = station.next[i]
+                    if (!book.includes(n)) {
+                        next = find(n)
+                        book.push(n)
+                        jisuan(next, step + 1)
+                        book.splice(book.indexOf(n), 1)
+                    }
+                }
+            }
+            jisuan(start, 0)
+            console.log(min)
+        },
         drawPoint (station, color = 'blue') {
             const [x, y] = station.position
             // ctx.globalCompositeOperation = 'destination-over'
@@ -92,14 +149,14 @@ export default {
     },
     watch: {
         startVal (e) {
-            const {sub, startVal} = this
+            const {sub} = this
             this.startStation = ''
-            this.startList = Object.freeze(sub[startVal].list)
+            this.startList = Object.freeze(sub[e].list)
         },
         endVal (e) {
-            const {sub, endVal} = this
+            const {sub} = this
             this.endStation = ''
-            this.endList = Object.freeze(sub[endVal].list)
+            this.endList = Object.freeze(sub[e].list)
         }
     },
     mounted () {
