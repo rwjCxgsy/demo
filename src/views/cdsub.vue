@@ -23,6 +23,9 @@
                     <form-item label="计算最短路线">
                         <Button type="primary" @click="planning" :disabled="isplan">计算路程</Button>
                     </form-item>
+                    <form-item label="最少站数">
+                        <p>{{num}}</p>
+                    </form-item>
                 </Form>
             </div>
         </div>
@@ -46,7 +49,8 @@ export default {
             startList: [],
             endVal: '',
             endStation: '',
-            endList: []
+            endList: [],
+            num: ''
         }
     },
     computed: {
@@ -63,6 +67,7 @@ export default {
     },
     methods: {
         planning () {
+            console.time('最短站数')
             const {startVal, endVal, startStation, endStation} = this
             let start = subWay[startVal].list[startStation]
             let end = subWay[endVal].list[endStation]
@@ -92,6 +97,9 @@ export default {
                     if (step < min) {
                         min = step
                     }
+                    if (step === min) {
+                        console.log('两条路程站数一样')
+                    }
                     return false
                 }
                 for (let i = 0; i < station.next.length; i++) {
@@ -105,7 +113,9 @@ export default {
                 }
             }
             jisuan(start, 0)
+            console.timeEnd('最短站数')
             console.log(min)
+            this.num = min
         },
         drawPoint (station, color = 'blue') {
             const [x, y] = station.position
