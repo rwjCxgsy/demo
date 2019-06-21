@@ -73,8 +73,12 @@ export default {
             let end = subWay[endVal].list[endStation]
             console.log(start, end)
             let next = null
-            let book = []
+            let book = new Set()
             let min = 99999
+            const stepList = {
+                1: []
+            }
+            let k = 1
             const find = (station) => {
                 let result = null
                 for (const key in subWay) {
@@ -93,6 +97,9 @@ export default {
                 return result
             }
             function jisuan (station, step) {
+                if (step > min) {
+                    return false
+                }
                 if (station.name === end.name) {
                     if (step < min) {
                         min = step
@@ -102,19 +109,26 @@ export default {
                     }
                     return false
                 }
-                for (let i = 0; i < station.next.length; i++) {
+                let {length} = station.next
+                for (let i = 0; i < length; i++) {
                     let n = station.next[i]
-                    if (!book.includes(n)) {
+                    if (!book.has(n)) {
                         next = find(n)
-                        book.push(n)
+                        // if (length <= 2) {
+                        //     stepList[k].push(next)
+                        // } else {
+                        //     let _k = k + 1
+                        //     stepList[_k] = [...stepList[k]]
+                        // }
+                        book.add(n)
                         jisuan(next, step + 1)
-                        book.splice(book.indexOf(n), 1)
+                        book.delete(n)
                     }
                 }
             }
             jisuan(start, 0)
+            console.log(stepList)
             console.timeEnd('最短站数')
-            console.log(min)
             this.num = min
         },
         drawPoint (station, color = 'blue') {
