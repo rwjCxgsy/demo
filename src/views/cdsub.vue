@@ -23,9 +23,13 @@
                     <form-item label="计算最短路线">
                         <Button type="primary" @click="planning" :disabled="isplan">计算路程</Button>
                     </form-item>
-                    <form-item label="最少站数">
-                        <p>{{num}}</p>
-                    </form-item>
+                    <form-item label="最短路线"/>
+                    <div class="step-map">
+                        <div v-for="(item, index) in minStation" :key="index">
+                            <strong>{{index+1}}</strong>
+                            <span>{{item.name}}</span>
+                        </div>
+                    </div>
                 </Form>
             </div>
         </div>
@@ -50,7 +54,7 @@ export default {
             endVal: '',
             endStation: '',
             endList: [],
-            num: ''
+            minStation: []
         }
     },
     computed: {
@@ -72,13 +76,11 @@ export default {
             let start = subWay[startVal].list[startStation]
             let end = subWay[endVal].list[endStation]
             console.log(start, end)
-            let next = null
             let book = new Set()
             let min = 99999
-            const stepList = {
-                1: []
-            }
+            const stepList = new Set()
             let k = 1
+            const allStepsList = {}
             const find = (station) => {
                 let result = null
                 for (const key in subWay) {
@@ -97,38 +99,44 @@ export default {
                 return result
             }
             function jisuan (station, step) {
-                if (step > min) {
-                    return false
-                }
+                let next = null
+                // if (stepList.size > min) {
+                //     return false
+                // }
                 if (station.name === end.name) {
-                    if (step < min) {
-                        min = step
+                    if (stepList.size < min) {
+                        min = stepList.size
                     }
-                    if (step === min) {
-                        console.log('两条路程站数一样')
-                    }
+                    allStepsList[++k] = [...stepList]
                     return false
                 }
                 let {length} = station.next
                 for (let i = 0; i < length; i++) {
                     let n = station.next[i]
-                    if (!book.has(n)) {
-                        next = find(n)
-                        // if (length <= 2) {
-                        //     stepList[k].push(next)
-                        // } else {
-                        //     let _k = k + 1
-                        //     stepList[_k] = [...stepList[k]]
-                        // }
-                        book.add(n)
+                    next = find(n)
+                    if (!stepList.has(next)) {
+                        // next = find(n)
+                        stepList.add(next)
+                        // book.add(n)
                         jisuan(next, step + 1)
-                        book.delete(n)
+                        // book.delete(n)
+                        stepList.delete(next)
                     }
                 }
             }
+            stepList.add(start)
             jisuan(start, 0)
-            console.log(stepList)
+            console.log(allStepsList)
             console.timeEnd('最短站数')
+            for (const key in allStepsList) {
+                if (allStepsList.hasOwnProperty(key)) {
+                    const element = allStepsList[key];
+                    if (element.length === min) {
+                        this.minStation = element
+                        break
+                    }
+                }
+            }
             this.num = min
         },
         drawPoint (station, color = 'blue') {
@@ -233,5 +241,27 @@ export default {
         .right {
             flex: 1;
         }
+    }
+    .step-map {
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        align-content: flex-start;
+        div {
+            width: 150px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            strong {
+                display: inline-block;
+                width: 20px;
+                text-align: right;
+                margin-right: 10px;
+            }            
+        }
+
     }
 </style>
