@@ -196,23 +196,33 @@ export default {
             }
             // this.num = min
         },
-        drawPoint (station, color = 'blue') {
+        drawPoint (station, color) {
+            let _color = color[0]
+            console.log(color)
             const [x, y] = station.position
+            ctx.lineWidth = 2
             // ctx.globalCompositeOperation = 'destination-over'
-            ctx.fillStyle = color
-            ctx.font = '12px sans-serif'
-            const {textAlign = 'start', textBaseline = 'middle', direction = 'inherit', offset = [0, 0]} = station
-            ctx.textAlign = textAlign
-            ctx.textBaseline = textBaseline
-            ctx.direction = direction
-            ctx.fillText(station.name, x * 60 + offset[0] + (textAlign === 'end' ? (-16) : (16)) , y * 50 + offset[1])
-            if (station.next && station.next.length >= 3) {
-                ctx.beginPath()
-                ctx.arc(x * 60, y * 50, 10, 0, Math.PI * 2, false)
-                ctx.closePath()
-                ctx.fillStyle = 'blue'
-                ctx.fill()
+            if (color.length > 1) {
+                console.log('还站', color)
+                const {length} = color
+                ctx.save()
+                ctx.translate(x * 60, y * 50)
+                ctx.rotate((Math.PI * 2) / 8 * 5)
+                let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
+                let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
+                for (let i = 0; i < length; i++) {
+                    ctx.beginPath()
+                    console.log(color[i])
+                    ctx.strokeStyle = color[i]
+                    ctx.arc(0, 0, 12, startAngle * i, rangAngle * (i + 1), false)
+                    ctx.stroke()
+                }
+                ctx.restore()
+                // ctx.fillStyle = _color
                 ctx.fillStyle = '#fff'
+                ctx.arc(x * 60, y * 50, 10, 0, Math.PI * 2, false)
+                ctx.fill()
+                ctx.fillStyle = 'blue'
                 ctx.textBaseline = 'middle'
                 ctx.textAlign = 'center'
                 ctx.font = '12px sans-serif'
@@ -221,15 +231,23 @@ export default {
                 ctx.beginPath()
                 ctx.arc(x * 60, y * 50, 4, 0, Math.PI * 2, false)
                 ctx.closePath()
-                ctx.fillStyle = color
+                ctx.fillStyle = _color
                 ctx.fill()
             }
+            ctx.fillStyle = _color
+            ctx.font = '12px sans-serif'
+            const {textAlign = 'start', textBaseline = 'middle', direction = 'inherit', offset = [0, 0]} = station
+            ctx.textAlign = textAlign
+            ctx.textBaseline = textBaseline
+            ctx.direction = direction
+            ctx.fillText(station.name, x * 60 + offset[0] + (textAlign === 'end' ? (-16) : (16)) , y * 50 + offset[1])
             
         },
         drawLine (start, end, color = 'rgb(159, 159, 255)') {
             console.log(color)
             ctx.strokeStyle = color
             ctx.beginPath()
+            ctx.lineWidth = 4
             ctx.moveTo(start.x * 60, start.y * 50)
             ctx.lineTo(end.x * 60, end.y * 50)
             ctx.closePath()
@@ -284,7 +302,11 @@ export default {
                     }
                     isDraw.push(v)
                     const station = list[v]
-                    this.drawPoint(station, color)
+                    let _color = []
+                    list[v].line.forEach(v => {
+                        _color.push(subWay['line' + v].color)
+                    })
+                    this.drawPoint(station, _color)
                 })
             })
         })
