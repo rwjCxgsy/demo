@@ -25,9 +25,13 @@
                     </form-item>
                     <form-item label="最短路线"/>
                     <div class="step-map">
-                        <div v-for="(item, index) in minStation" :key="index">
+                        <div v-for="(item, index) in line" :key="index">
+                            <i v-if="index === 0">起</i>
+                            <i v-if="index === line.length - 1">始</i>
+                            <i v-if="item.isChange">转</i>
                             <strong>{{index+1}}</strong>
                             <span>{{item.name}}</span>
+                            <p>{{item.des}}</p>
                         </div>
                     </div>
                 </Form>
@@ -39,6 +43,8 @@
 <script>
 import subWay from './line'
 import {Select, Option, Form, FormItem, Button, Message} from 'element-ui'
+import {cloneDeep, intersection} from 'lodash'
+console.log(cloneDeep)
 let ctx = null
 let prev = {x: null, y: null}
 const isDraw = []
@@ -58,6 +64,32 @@ export default {
         }
     },
     computed: {
+        line () {
+            const {minStation} = this
+            if (!minStation.length) {
+                return []
+            }
+            const newMinStation = cloneDeep(minStation)
+            console.log(newMinStation)
+            let startStation = newMinStation[0].line
+            let nextStation = newMinStation[1].line
+            let currentLine = intersection(startStation, nextStation)[0]
+            newMinStation[0].start = currentLine
+            for (let index = 0; index < newMinStation.length - 1; index++) {
+                const element = newMinStation[index];
+                const nextElement = newMinStation[index + 1];
+                const some = intersection(element.line, nextElement.line)[0]
+                if (some !== currentLine) {
+                    element.des = `${currentLine}号线换成${some}号线`
+                    element.changeLine = [currentLine, some]
+                    element.isChange = true
+                    currentLine = some
+                } else {
+                    element.isChange = false
+                }
+            }
+            return newMinStation
+        },
         isplan () {
             const {startVal, endVal, startStation, endStation} = this
             if (!(startStation && endStation)) {
@@ -75,8 +107,6 @@ export default {
             const {startVal, endVal, startStation, endStation} = this
             let start = subWay[startVal].list[startStation]
             let end = subWay[endVal].list[endStation]
-            console.log(start, end)
-            let book = new Set()
             let min = 99999
             const stepList = new Set()
             let k = 1
@@ -115,11 +145,8 @@ export default {
                     let n = station.next[i]
                     next = find(n)
                     if (!stepList.has(next)) {
-                        // next = find(n)
                         stepList.add(next)
-                        // book.add(n)
                         jisuan(next, step + 1)
-                        // book.delete(n)
                         stepList.delete(next)
                     }
                 }
@@ -137,7 +164,7 @@ export default {
                     }
                 }
             }
-            this.num = min
+            // this.num = min
         },
         drawPoint (station, color = 'blue') {
             const [x, y] = station.position
@@ -251,16 +278,34 @@ export default {
         justify-content: flex-start;
         align-content: flex-start;
         div {
-            width: 150px;
             height: 35px;
             display: flex;
             align-items: center;
+            position: relative;
+            i {
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translate(0, -50%);
+                font-style: normal;
+                border-radius: 50%;
+                font-size: 14px;
+            }
             strong {
+                margin-left: 20px;
                 display: inline-block;
                 width: 20px;
                 text-align: right;
                 margin-right: 10px;
-            }            
+            }
+            span {
+                display: inline-block;
+                min-width: 120px;
+            }
+            p {
+                color: red;
+                font-size: 12px;
+            }    
         }
 
     }
