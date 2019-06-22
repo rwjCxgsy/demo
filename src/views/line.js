@@ -2,8 +2,8 @@ const line1 = {
     name: '一号线',
     value: 'line1',
     type: 1,
-    color: 'blue',
-    lineColor: 'rgb(159, 159, 255)',
+    color: '#1E51A0',
+    lineColor: 'rgb(122, 175, 255)',
     list: {
         wjn: {
             name: '韦家碾',
@@ -346,10 +346,10 @@ const line3 = {
         },
         tpy: {
             name: '太平园',
-            line: [3, 7],
+            line: [3, 7, 10],
             srot: 1,
             position: [2, 16],
-            next: ['hpl', 'zj', 'whdd', 'gpdd'],
+            next: ['hpl', 'zj', 'whdd', 'gpdd', 'czlj'],
             offset: [0, 16]
         },
         zj: {
@@ -598,9 +598,9 @@ const line7 = {
         },
         tpy: {
             name: '太平园',
-            line: [7, 3],
+            line: [7, 3, 10],
             position: [2, 16],
-            next: ['gpdd', 'whdd', 'hpl', 'zj']
+            next: ['gpdd', 'whdd', 'hpl', 'zj', 'czlj']
         },
         whdd: {
             name: '武侯大道',
@@ -679,10 +679,34 @@ const line7 = {
     }
 }
 
+const line10 = {
+    value: 'line10',
+    type: 0,
+    name: '十号线',
+    color: '#000',
+    lineColor: '#666',
+    list: {
+        tpy: {
+            name: '太平园',
+            line: [10, 7, 3],
+            position: [2, 16],
+            next: ['czlj', 'gpdd', 'whdd', 'hpl', 'zj']
+        },
+        czlj: {
+            name: '川藏立交',
+            line: [10],
+            position: [1, 16],
+            offset: [-16, -16],
+            next: ['tpy'],
+        }
+    }
+}
+
 export default {
     line1,
     line2,
     line3,
     line4,
-    line7
+    line7,
+    line10
 }

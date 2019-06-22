@@ -29,7 +29,9 @@
                             <i v-if="index === 0">起</i>
                             <i v-if="index === line.length - 1">始</i>
                             <i v-if="item.isChange">转</i>
-                            <strong>{{index+1}}</strong>
+                            <div :style="lineStyle(item.changeLine)">
+                                <strong>{{index+1}}</strong>
+                            </div>
                             <span>{{item.name}}</span>
                             <p>{{item.des}}</p>
                         </div>
@@ -75,9 +77,12 @@ export default {
             let nextStation = newMinStation[1].line
             let currentLine = intersection(startStation, nextStation)[0]
             newMinStation[0].start = currentLine
-            for (let index = 0; index < newMinStation.length - 1; index++) {
+            for (let index = 0; index < newMinStation.length; index++) {
                 const element = newMinStation[index];
-                const nextElement = newMinStation[index + 1];
+                let nextElement = newMinStation[index + 1];
+                if (!nextElement) {
+                    nextElement = element
+                }
                 const some = intersection(element.line, nextElement.line)[0]
                 if (some !== currentLine) {
                     element.des = `${currentLine}号线换成${some}号线`
@@ -85,6 +90,7 @@ export default {
                     element.isChange = true
                     currentLine = some
                 } else {
+                    element.changeLine = [currentLine]
                     element.isChange = false
                 }
             }
@@ -102,6 +108,30 @@ export default {
         }
     },
     methods: {
+        lineStyle (line) {
+            console.log(line)
+            const {length} = line
+            const findColor = (line) => {
+                return subWay['line' + line].color
+            }
+            if (length === 1) {
+                return {
+                    borderTop: '10px solid ' + findColor(line[0]),
+                    borderBottom: '10px solid ' + findColor(line[0]),
+                }
+            } else if (length === 2) {
+                return {
+                    borderTop: '10px solid ' + findColor(line[0]),
+                    borderBottom: '10px solid ' + findColor(line[1]),
+                }
+            } else {
+                return {
+                    borderTop: '10px solid ' + findColor(line[0]),
+                    borderBottom: '10px solid ' + findColor(line[1]),
+                }
+            }
+            return {}
+        },
         planning () {
             console.time('最短站数')
             const {startVal, endVal, startStation, endStation} = this
@@ -270,15 +300,16 @@ export default {
         }
     }
     .step-map {
-        height: 350px;
+        height: 450px;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         align-items: flex-start;
         justify-content: flex-start;
         align-content: flex-start;
-        div {
-            height: 35px;
+        &>div {
+            height: 45px;
+            margin-right: 20px;
             display: flex;
             align-items: center;
             position: relative;
@@ -291,16 +322,26 @@ export default {
                 border-radius: 50%;
                 font-size: 14px;
             }
-            strong {
-                margin-left: 20px;
+            div {
                 display: inline-block;
+                margin-left: 20px;
                 width: 20px;
-                text-align: right;
-                margin-right: 10px;
+                height: 0;
+                border-radius: 50%;
+                position: relative;
+                strong {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    color: #fff;
+                    font-size: 14px;
+                }
             }
             span {
                 display: inline-block;
-                min-width: 120px;
+                min-width: 100px;
+                margin-left: 10px;
             }
             p {
                 color: red;
