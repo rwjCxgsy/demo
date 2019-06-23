@@ -101,7 +101,6 @@ export default {
     },
     methods: {
         lineStyle (line) {
-            console.log(line)
             const {length} = line
             const findColor = (line) => {
                 return subWay['line' + line].color
@@ -281,7 +280,7 @@ export default {
             }
             this.mastMinStation = copyValue[1]
             let minC = 9999
-            console.log(length)
+            let temp = []
             for (const key in copyValue) {
                 const scheme = copyValue[key]
                 let c = 0
@@ -292,24 +291,11 @@ export default {
                     }
                 }
                 if (c < minC) {
-                    minC = c
+                    temp = scheme
                 }
             }
-            console.log(minC)
-            for (const key in copyValue) {
-                const scheme = copyValue[key]
-                let c = 0
-                const {length} = scheme
-                for (let i = 0; i < length; i++) {
-                    if (scheme[i].isChange) {
-                        c++
-                    }
-                }
-                if (c === minC) {
-                    this.mastMinChange = Object.freeze(scheme)
-                    break
-                }
-            }
+            this.mastMinChange = Object.freeze(temp)
+            console.timeEnd('最短站数')
         },
         startVal (e) {
             const {sub} = this
@@ -322,7 +308,7 @@ export default {
             this.endList = Object.freeze(sub[e].list)
         }
     },
-    created () {
+    beforeCreate () {
         console.time('map')
     },
     mounted () {
