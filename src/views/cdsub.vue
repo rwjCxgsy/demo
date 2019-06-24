@@ -8,7 +8,7 @@
                         <Select v-model="startVal" placeholder="请选择线路">
                             <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
                         </Select>
-                        <Select v-model="startStation" placeholder="请选择车站">
+                        <Select no-data-text="请选择开始线路" v-model="startStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in startList" :disabled="index === endStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
@@ -16,7 +16,7 @@
                         <Select v-model="endVal" placeholder="请选择线路">
                             <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
                         </Select>
-                        <Select v-model="endStation" placeholder="请选择车站">
+                        <Select no-data-text="请选择结束线路" v-model="endStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in endList" :disabled="index === startStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
@@ -71,7 +71,7 @@ let ctx = null
 let prev = {x: null, y: null}
 const isDraw = []
 export default {
-    name: 'xg-video',
+    name: 'cd-subWay',
     components: {Select, Option, Form, FormItem, Button},
     data () {
         return {
@@ -298,14 +298,12 @@ export default {
             console.timeEnd('最短站数')
         },
         startVal (e) {
-            const {sub} = this
             this.startStation = ''
-            this.startList = Object.freeze(sub[e].list)
+            this.startList = Object.freeze(subWay[e].list)
         },
         endVal (e) {
-            const {sub} = this
             this.endStation = ''
-            this.endList = Object.freeze(sub[e].list)
+            this.endList = Object.freeze(subWay[e].list)
         }
     },
     beforeCreate () {
