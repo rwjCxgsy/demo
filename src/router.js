@@ -1,8 +1,5 @@
 import Vue from 'vue'
 import vueRouter from 'vue-router'
-import Range from './views/range'
-import Home from './views/home'
-
 Vue.use(vueRouter)
 
 export default new vueRouter({
@@ -14,11 +11,11 @@ export default new vueRouter({
         },
         {
             path: '/range',
-            component: Range,
+            component: () => import('./views/range'),
         },
         {
             path: '/home',
-            component: Home,
+            component: () => import('./views/home'),
         },
         {
             path: '/cdsub',
