@@ -5,12 +5,18 @@
             <div>
                 <Form>
                     <form-item label="选择起始站">
-                        <Select no-data-text="请选择开始线路" v-model="startStation" placeholder="请选择车站">
+                        <Select v-model="startLine" placeholder="请选择线开始线路">
+                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="index" />
+                        </Select>  
+                        <Select no-data-text="请选择开始站" v-model="startStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in startList" :disabled="index === endStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
                     <form-item label="选择结束站">
-                        <Select no-data-text="请选择结束线路" v-model="endStation" placeholder="请选择车站">
+                        <Select v-model="endLine" placeholder="请选择线结束线路">
+                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="index" />
+                        </Select>  
+                        <Select no-data-text="请选择结束站" v-model="endStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in endList" :disabled="index === startStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
@@ -70,10 +76,10 @@ export default {
     data () {
         return {
             sub: Object.freeze(subWay),
-            startVal: '',
+            startLine: '',
             startStation: '',
             startList: [],
-            endVal: '',
+            endLine: '',
             endStation: '',
             endList: [],
             minStation: {},
@@ -83,7 +89,7 @@ export default {
     },
     computed: {
         isplan () {
-            const {startVal, endVal, startStation, endStation} = this
+            const {startStation, endStation} = this
             if (!(startStation && endStation)) {
                 return true
             }
@@ -119,9 +125,9 @@ export default {
         },
         planning () {
             console.time('最短站数')
-            const {startVal, endVal, startStation, endStation} = this
-            let start = subWay[startVal].list[startStation]
-            let end = subWay[endVal].list[endStation]
+            const {startStation, endStation, startList, endList} = this
+            let start = startList[startStation]
+            let end = endList[endStation]
             let min = 99999
             const stepList = new Set()
             let k = 1
@@ -130,8 +136,8 @@ export default {
                 let result = null
                 for (const key in subWay) {
                     if (subWay.hasOwnProperty(key)) {
-                        const element = subWay[key];
-                        const _result = element.list[station]
+                        const element = subWay[key].list;
+                        const _result = element[station]
                         if (_result) {
                             result = _result
                             break
@@ -246,11 +252,11 @@ export default {
             this.mastMinChange = Object.freeze(temp)
             console.timeEnd('最短站数')
         },
-        startVal (e) {
+        startLine (e) {
             this.startStation = ''
             this.startList = Object.freeze(subWay[e].list)
         },
-        endVal (e) {
+        endLine (e) {
             this.endStation = ''
             this.endList = Object.freeze(subWay[e].list)
         }
@@ -374,7 +380,7 @@ export default {
             const stationList = new Set()
             const lineList = new Set()
             for (const lineKey in subWay) {
-                const _line = subWay[lineKey]
+                const _line = subWay[lineKey].list
                 lineList.add(new Line(lineKey, _line))
                 for (const stationKey in _line) {
                     const _station = _line[stationKey]
