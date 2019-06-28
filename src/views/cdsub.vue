@@ -406,7 +406,7 @@ export default {
                 constructor (lineNumber, line) {
                     this.lineNumber = lineNumber
                     this.line = line
-                    this.lineWidth = 4
+                    this.lineWidth = 3
                 }
                 draw () {
                     const {line, lineNumber, lineWidth} = this
@@ -428,6 +428,46 @@ export default {
                         ctx.stroke()
                     }
                 }
+                updata () {
+                    const {line} = this
+                    const list = Object.keys(line)
+                    for (let i = 0; i < list.length - 1; i++) {
+                        const cur = list[i];
+                        const next = list[i + 1]
+                        if (this.computed(line[cur], line[next])) {
+                            this.lineWidth = 6
+                            break;
+                        } else {
+                            this.lineWidth = 3
+                        }
+                    }
+                    this.draw()
+                }
+                computed (start, end) {
+                    const {x, y} = offset
+                    const [SX, SY] = start.position
+                    const [EX, EY] = end.position
+                    const maxX = Math.max(SX, EX) * 60
+                    const minX = Math.min(SX, EX) * 60
+                    const maxY = Math.max(SY, EY) * 50
+                    const minY = Math.min(SY, EY) * 50
+                    if (x-2 > maxX || x+2 < minX || y-2 > maxY || y+2 < minY) {
+                        return false
+                    }
+                    const k = ((EY - SY) * 60) / ((EX - SX)*50)
+                    if (!isFinite(k)) {
+                        return Math.abs(x - maxX) <= 4
+                    }
+                    if (k === 0) {
+                        return Math.abs(y - maxY) <= 4
+                    }
+                    if (k < 0) {
+                        return x*k + y <= 4
+                    } else {
+                        return x - y*k <= 4
+                    }
+                    return false
+                }
             }
             const stationList = new Set()
             const lineList = new Set()
@@ -444,7 +484,7 @@ export default {
                 requestAnimationFrame(animate)
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight)
                 for (let line of lineList) {
-                    line.draw()
+                    line.updata()
                 }
                 for (let station of stationList) {
                     if (!isDraw.includes(station.name)) {
