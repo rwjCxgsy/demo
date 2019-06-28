@@ -350,7 +350,9 @@ export default {
                             this.showDescription()
                         }
                     } else {
-                        this.radius = 6
+                        if (this.radius > 6) {
+                            this.radius -= 1
+                        }
                         if (this.descriptionContainer) {
                             this.descriptionContainer.remove()
                             this.descriptionContainer = null
@@ -466,10 +468,10 @@ export default {
         padding: 10px;
         box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
         strong {
-            font-size: 14px;
+            font-size: 12px;
         }
         span {
-            font-size: 14px;
+            font-size: 12px;
         }
     }
     .cd-sub {
