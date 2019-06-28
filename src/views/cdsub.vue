@@ -292,6 +292,7 @@ export default {
                     this.radius = 6
                     this.isActive = false
                     this.isSelected = false
+                    this.descriptionContainer = null
                 }
                 draw () {
                     const {color, name, x, y, textAlign, textBaseline, direction, offset, radius} = this
@@ -342,11 +343,60 @@ export default {
                     const offsetX = offset.x
                     const isMoveUp = ((x * 60 - offsetX)**2 + (y * 50 - offsetY)**2) <= ((radius+2) ** 2)
                     if (isMoveUp) {
-                        this.radius = 8
+                        if (this.radius < 8) {
+                            this.radius += 1
+                        }
+                        if (!this.descriptionContainer) {
+                            this.showDescription()
+                        }
                     } else {
                         this.radius = 6
+                        if (this.descriptionContainer) {
+                            this.descriptionContainer.remove()
+                            this.descriptionContainer = null
+                        }
                     }
                     this.draw()
+                }
+                showDescription () {
+                    const {x, y, name, line, next} = this
+                    let div = this.descriptionContainer = document.createElement('div')
+                    div.classList.add('station-des')
+                    div.style.cssText = `position: fixed; left: ${60 * x + 25}px; top: ${y * 50 + 16}px`
+                    const nextStation = () => {
+                        let result = ''
+                        outer: for (const iterator of next) {
+                            inner: for (const key in subWay) {
+                                if (subWay.hasOwnProperty(key)) {
+                                    const element = subWay[key];
+                                    if (element.list[iterator]) {
+                                        result += element.list[iterator].name
+                                        break inner
+                                    }
+                                }
+                            }
+                            result += '、'
+                        }
+                        result = result.substring(0, result.length - 1) 
+                        return result
+                    }
+                    div.innerHTML = `
+                        <div>
+                            <div>
+                                <strong>名称：</strong>
+                                <span>${name}</span>
+                            </div>
+                            <div>
+                                <strong>线路：</strong>
+                                <span>${line.length === 1 ? line[0] : line.length === 2 ? (line[0] + '号线和' + line[1] + '号线换乘线') : (line[0] + '号线、' + line[1] + '号线和' + line[2] + '号线换乘线') }</span>
+                            </div>
+                            <div>
+                                <strong>相邻站：</strong>
+                                <span>${nextStation()}</span>
+                            </div>
+                        </div>
+                    `
+                    document.body.append(div)
                 }
             }
 
@@ -408,9 +458,25 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+    .station-des {
+        position: fixed;
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+        box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
+        strong {
+            font-size: 14px;
+        }
+        span {
+            font-size: 14px;
+        }
+    }
     .cd-sub {
+        height: 100vh;
+        background-color: rgb(248, 248, 248);
         display: flex;
+        align-items: center;
         .right {
             flex: 1;
         }
