@@ -67,7 +67,7 @@ import subWay from './line.bak'
 // console.log(subWay)
 import {Select, Option, Form, FormItem, Button, Message} from 'element-ui'
 import {cloneDeep, intersection} from 'lodash'
-import {throttle, debounce} from 'lodash'
+// import {throttle, debounce} from 'lodash'
 let ctx = null
 let prev = {x: null, y: null}
 export default {
@@ -105,23 +105,22 @@ export default {
             const findColor = (line) => {
                 return subWay['line' + line].color
             }
-            if (length === 1) {
-                return {
+            console.log(line)
+            const style = {
+                1: {
                     borderTop: '10px solid ' + findColor(line[0]),
                     borderBottom: '10px solid ' + findColor(line[0]),
-                }
-            } else if (length === 2) {
-                return {
+                },
+                2: {
                     borderTop: '10px solid ' + findColor(line[0]),
                     borderBottom: '10px solid ' + findColor(line[1]),
-                }
-            } else {
-                return {
+                },
+                3: {
                     borderTop: '10px solid ' + findColor(line[0]),
                     borderBottom: '10px solid ' + findColor(line[1]),
                 }
             }
-            return {}
+            return style[length] || {}
         },
         planning () {
             console.time('最短站数')
@@ -186,15 +185,6 @@ export default {
             }
             this.minStation = temp
             // this.num = min
-        },
-        drawLine (start, end, color = 'rgb(159, 159, 255)') {
-            ctx.strokeStyle = color
-            ctx.beginPath()
-            ctx.lineWidth = 4
-            ctx.moveTo(start.x * 60, start.y * 50)
-            ctx.lineTo(end.x * 60, end.y * 50)
-            ctx.closePath()
-            ctx.stroke()
         },
         disposeData (value) {
             const copyValue = {}
@@ -407,6 +397,7 @@ export default {
                     this.lineNumber = lineNumber
                     this.line = line
                     this.lineWidth = 3
+                    this.descriptionContainer = null
                 }
                 draw () {
                     const {line, lineNumber, lineWidth} = this
@@ -469,6 +460,7 @@ export default {
                     return false
                 }
             }
+
             const stationList = new Set()
             const lineList = new Set()
             for (const lineKey in subWay) {
