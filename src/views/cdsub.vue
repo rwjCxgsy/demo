@@ -5,17 +5,11 @@
             <div>
                 <Form>
                     <form-item label="选择起始站">
-                        <Select v-model="startVal" placeholder="请选择线路">
-                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
-                        </Select>
                         <Select no-data-text="请选择开始线路" v-model="startStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in startList" :disabled="index === endStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
                     </form-item>
                     <form-item label="选择结束站">
-                        <Select v-model="endVal" placeholder="请选择线路">
-                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="item.value" />
-                        </Select>
                         <Select no-data-text="请选择结束线路" v-model="endStation" placeholder="请选择车站">
                             <Option v-for="(item, index) in endList" :disabled="index === startStation" :key="index" :label="item.name" :value="index" />
                         </Select>                        
@@ -62,14 +56,14 @@
 </template>
 
 <script>
-import subWay from './line'
+import subWay from './line.bak'
+// const subWay = () => import('./line.bak')
+// console.log(subWay)
 import {Select, Option, Form, FormItem, Button, Message} from 'element-ui'
 import {cloneDeep, intersection} from 'lodash'
-import { debuglog } from 'util';
-console.log(cloneDeep)
+import {throttle, debounce} from 'lodash'
 let ctx = null
 let prev = {x: null, y: null}
-const isDraw = []
 export default {
     name: 'cd-subWay',
     components: {Select, Option, Form, FormItem, Button},
@@ -187,51 +181,6 @@ export default {
             this.minStation = temp
             // this.num = min
         },
-        drawPoint (station, color) {
-            let _color = color[0]
-            const [x, y] = station.position
-            ctx.lineWidth = 2
-            // ctx.globalCompositeOperation = 'destination-over'
-            if (color.length > 1) {
-                const {length} = color
-                ctx.save()
-                ctx.translate(x * 60, y * 50)
-                ctx.rotate((Math.PI * 2) / 8 * 5)
-                let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
-                let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
-                for (let i = 0; i < length; i++) {
-                    ctx.beginPath()
-                    ctx.lineWidth = 4
-                    ctx.strokeStyle = color[i]
-                    ctx.arc(0, 0, 12, startAngle * i, rangAngle * (i + 1), false)
-                    ctx.stroke()
-                }
-                ctx.restore()
-                // ctx.fillStyle = _color
-                ctx.fillStyle = '#fff'
-                ctx.arc(x * 60, y * 50, 10, 0, Math.PI * 2, false)
-                ctx.fill()
-                ctx.fillStyle = 'blue'
-                ctx.textBaseline = 'middle'
-                ctx.textAlign = 'center'
-                ctx.font = '12px sans-serif'
-                ctx.fillText('换' , x * 60, y * 50)
-            } else {
-                ctx.beginPath()
-                ctx.arc(x * 60, y * 50, 4, 0, Math.PI * 2, false)
-                ctx.closePath()
-                ctx.fillStyle = _color
-                ctx.fill()
-            }
-            ctx.fillStyle = _color
-            ctx.font = '12px sans-serif'
-            const {textAlign = 'start', textBaseline = 'middle', direction = 'inherit', offset = [0, 0]} = station
-            ctx.textAlign = textAlign
-            ctx.textBaseline = textBaseline
-            ctx.direction = direction
-            ctx.fillText(station.name, x * 60 + offset[0] + (textAlign === 'end' ? (-16) : (16)) , y * 50 + offset[1])
-            
-        },
         drawLine (start, end, color = 'rgb(159, 159, 255)') {
             ctx.strokeStyle = color
             ctx.beginPath()
@@ -306,52 +255,148 @@ export default {
             this.endList = Object.freeze(subWay[e].list)
         }
     },
-    beforeCreate () {
-        console.time('map')
-    },
     mounted () {
         this.$nextTick(() => {
             const canvas = this.$refs.map
-            canvas.width = 1200
-            canvas.height = 900
+            const offset = {x: 0, y: 0}
+            canvas.addEventListener('mousemove', mousemove)
+            function mousemove (e) {
+                const {offsetX, offsetY} = e
+                offset.x = offsetX
+                offset.y = offsetY
+            }
+            const canvasWidth = 1200
+            const canvasHeight = 900
+            canvas.width = canvasWidth
+            canvas.height = canvasHeight
             ctx = this.$refs.map.getContext('2d')
-            // 线路一
-            Object.keys(subWay).forEach(v => {
-                const {lineColor, list, type} = subWay[v]
-                const _list = Object.keys(list)
-                if (type === 0) {
-                    const last = list[_list[_list.length - 1]].position
-                    console.log(last)
-                    prev = {x: last[0], y: last[1]}
+            class Point {
+                constructor ({position, line, color, next, name, textAlign = 'start', textBaseline = 'middle', direction = 'ltl', offset = [0, 0]}) {
+                    const [x, y] = position
+                    this.x = x
+                    this.y = y
+                    this.color = color
+                    this.line = line
+                    this.next = next
+                    this.name = name
+                    this.textAlign = textAlign
+                    this.textBaseline = textBaseline
+                    this.direction = direction
+                    this.offset = offset
+                    this.radius = 6
+                    this.isActive = false
+                    this.isSelected = false
                 }
-                _list.forEach(v => {
-                    const station = list[v]
-                    const [x, y] = station.position
-                    if (prev.x && prev.y) {
-                        this.drawLine(prev, {x, y}, lineColor)
+                draw () {
+                    const {color, name, x, y, textAlign, textBaseline, direction, offset, radius} = this
+                    const _color = color[0]
+                    const {length} = color
+                    if (color.length > 1) {
+                        const {length} = color
+                        ctx.fillStyle = '#fff'
+                        ctx.beginPath()
+                        ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
+                        ctx.fill()
+                        ctx.fillStyle = 'blue'
+                        ctx.textBaseline = 'middle'
+                        ctx.textAlign = 'center'
+                        ctx.font = '12px sans-serif'
+                        ctx.fillText('换' , x * 60, y * 50)
+                        ctx.save()
+                        ctx.translate(x * 60, y * 50)
+                        ctx.rotate((Math.PI * 2) / 8 * 5)
+                        let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
+                        let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
+                        for (let i = 0; i < length; i++) {
+                            ctx.beginPath()
+                            ctx.lineCap = "round"
+                            ctx.lineWidth = radius
+                            ctx.strokeStyle = color[i]
+                            ctx.arc(0, 0, radius * 2, startAngle * i, rangAngle * (i + 1), false)
+                            ctx.stroke()
+                        }
+                        ctx.restore()
+                    } else {
+                        ctx.beginPath()
+                        ctx.arc(x * 60, y * 50, radius, 0, Math.PI * 2, false)
+                        ctx.closePath()
+                        ctx.fillStyle = _color
+                        ctx.fill()
                     }
-                    prev.x = x
-                    prev.y = y
-                })
-                prev = {x: null, y: null}
-            })
-            Object.keys(subWay).forEach(v => {
-                const {color, list} = subWay[v]
-                const _list = Object.keys(list)
-                _list.forEach(v => {
-                    if (isDraw.includes(v)) {
-                        return false
+                    ctx.fillStyle = _color
+                    ctx.font = '12px sans-serif'
+                    ctx.textAlign = textAlign
+                    ctx.textBaseline = textBaseline
+                    ctx.direction = direction
+                    ctx.fillText(name, x * 60 + offset[0] + (textAlign === 'end' ? (-16) : (16)) , y * 50 + offset[1])
+                }
+                updata () {
+                    const {x, y , radius} = this
+                    const offsetY = offset.y
+                    const offsetX = offset.x
+                    const isMoveUp = ((x * 60 - offsetX)**2 + (y * 50 - offsetY)**2) <= ((radius+2) ** 2)
+                    if (isMoveUp) {
+                        this.radius = 8
+                    } else {
+                        this.radius = 6
                     }
-                    isDraw.push(v)
-                    const station = list[v]
-                    let _color = []
-                    list[v].line.forEach(v => {
-                        _color.push(subWay['line' + v].color)
-                    })
-                    this.drawPoint(station, _color)
-                })
-            })
-            console.timeEnd('map')
+                    this.draw()
+                }
+            }
+
+            class Line {
+                constructor (lineNumber, line) {
+                    this.lineNumber = lineNumber
+                    this.line = line
+                    this.lineWidth = 4
+                }
+                draw () {
+                    const {line, lineNumber, lineWidth} = this
+                    const list = Object.keys(line)
+                    const {length} = list
+                    const startPosition = line[list[0]]
+                    const [x, y] = startPosition.position
+                    const color = startPosition.color[0]
+                    ctx.strokeStyle = color
+                    ctx.beginPath()
+                    ctx.moveTo(x * 60, y * 50)
+                    ctx.lineWidth = lineWidth
+                    for (let i = 1; i < length; i++) {
+                        const [x, y] = line[list[i]].position
+                        ctx.lineTo(x * 60, y * 50)
+                        if (lineNumber === 'line7' && i === length - 1) {
+                            ctx.closePath()
+                        }
+                        ctx.stroke()
+                    }
+                }
+            }
+            const stationList = new Set()
+            const lineList = new Set()
+            for (const lineKey in subWay) {
+                const _line = subWay[lineKey]
+                lineList.add(new Line(lineKey, _line))
+                for (const stationKey in _line) {
+                    const _station = _line[stationKey]
+                    stationList.add(new Point(_station))
+                }
+            }
+            let isDraw = []
+            function animate () {
+                requestAnimationFrame(animate)
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+                for (let line of lineList) {
+                    line.draw()
+                }
+                for (let station of stationList) {
+                    if (!isDraw.includes(station.name)) {
+                        isDraw.push(station.name)
+                        station.updata()
+                    }
+                }
+                isDraw = []
+            }
+            animate()
         })
     }
 }
