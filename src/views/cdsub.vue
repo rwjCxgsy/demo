@@ -295,11 +295,6 @@ export default {
                         ctx.beginPath()
                         ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
                         ctx.fill()
-                        // ctx.fillStyle = 'blue'
-                        // ctx.textBaseline = 'middle'
-                        // ctx.textAlign = 'center'
-                        // ctx.font = '12px sans-serif'
-                        // ctx.fillText('换' , x * 60, y * 50)
                         ctx.drawImage(logo, x * 60 - 12, y * 50 - 12, 24, 24)
                         ctx.save()
                         ctx.translate(x * 60, y * 50)
