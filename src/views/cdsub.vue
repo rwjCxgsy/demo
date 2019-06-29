@@ -65,9 +65,10 @@
 import subWay from './line.bak'
 // const subWay = () => import('./line.bak')
 // console.log(subWay)
-import {Select, Option, Form, FormItem, Button, Message} from 'element-ui'
+import {Select, Option, Form, FormItem, Button, Message, Image} from 'element-ui'
 import {cloneDeep, intersection} from 'lodash'
-// import {throttle, debounce} from 'lodash'
+const logo = new Image()
+logo.src = process.env.BASE_URL + '/sub.jpg'
 let ctx = null
 let prev = {x: null, y: null}
 export default {
@@ -294,11 +295,12 @@ export default {
                         ctx.beginPath()
                         ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
                         ctx.fill()
-                        ctx.fillStyle = 'blue'
-                        ctx.textBaseline = 'middle'
-                        ctx.textAlign = 'center'
-                        ctx.font = '12px sans-serif'
-                        ctx.fillText('换' , x * 60, y * 50)
+                        // ctx.fillStyle = 'blue'
+                        // ctx.textBaseline = 'middle'
+                        // ctx.textAlign = 'center'
+                        // ctx.font = '12px sans-serif'
+                        // ctx.fillText('换' , x * 60, y * 50)
+                        ctx.drawImage(logo, x * 60 - 12, y * 50 - 12, 24, 24)
                         ctx.save()
                         ctx.translate(x * 60, y * 50)
                         ctx.rotate((Math.PI * 2) / 8 * 5)
@@ -307,7 +309,7 @@ export default {
                         for (let i = 0; i < length; i++) {
                             ctx.beginPath()
                             ctx.lineCap = "round"
-                            ctx.lineWidth = radius
+                            ctx.lineWidth = radius / 2
                             ctx.strokeStyle = color[i]
                             ctx.arc(0, 0, radius * 2, startAngle * i, rangAngle * (i + 1), false)
                             ctx.stroke()
@@ -351,7 +353,7 @@ export default {
                     this.draw()
                 }
                 showDescription () {
-                    const {x, y, name, line, next} = this
+                    const {x, y, name, line, next, color} = this
                     let div = this.descriptionContainer = document.createElement('div')
                     div.classList.add('station-des')
                     div.style.cssText = `position: fixed; left: ${60 * x + 25}px; top: ${y * 50 + 16}px`
