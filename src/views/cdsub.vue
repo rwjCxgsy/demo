@@ -105,22 +105,11 @@ export default {
             const findColor = (line) => {
                 return subWay['line' + line].color
             }
-            console.log(line)
             const style = {
-                1: {
-                    borderTop: '10px solid ' + findColor(line[0]),
-                    borderBottom: '10px solid ' + findColor(line[0]),
-                },
-                2: {
-                    borderTop: '10px solid ' + findColor(line[0]),
-                    borderBottom: '10px solid ' + findColor(line[1]),
-                },
-                3: {
-                    borderTop: '10px solid ' + findColor(line[0]),
-                    borderBottom: '10px solid ' + findColor(line[1]),
-                }
+                borderTop: '10px solid ' + findColor(line[0]),
+                borderBottom: '10px solid ' + findColor(line[length >= 2 ? 1 : 0]),
             }
-            return style[length] || {}
+            return style
         },
         planning () {
             console.time('最短站数')
@@ -150,9 +139,6 @@ export default {
             }
             function jisuan (station, step) {
                 let next = null
-                // if (stepList.size > min) {
-                //     return false
-                // }
                 if (station.name === end.name) {
                     if (stepList.size < min) {
                         min = stepList.size
@@ -178,11 +164,12 @@ export default {
             for (const key in allStepsList) {
                 if (allStepsList.hasOwnProperty(key)) {
                     const element = allStepsList[key];
-                    if (element.length === min) {
+                    if (element.length <= min + 2) {
                         temp[k++] = element
                     }
                 }
             }
+            console.log(temp)
             this.minStation = temp
             // this.num = min
         },
@@ -217,13 +204,25 @@ export default {
     },
     watch: {
         minStation (value) {
+            console.log(value)
             const copyValue = this.disposeData(value)
             const {length} = Object.keys(copyValue)
             if (length === 1) {
                 this.mastMinChange = this.mastMinStation = Object.freeze(copyValue[1])
                 return false
             }
-            this.mastMinStation = copyValue[1]
+            let min = 9999
+            let minTemp = []
+            for (const key in copyValue) {
+                if (copyValue.hasOwnProperty(key)) {
+                    const element = copyValue[key];
+                    if (element.length < min) {
+                        minTemp = element
+                        min = element.length
+                    }
+                }
+            }
+            this.mastMinStation = minTemp
             let minC = 9999
             let temp = []
             for (const key in copyValue) {
@@ -357,7 +356,7 @@ export default {
                     div.style.cssText = `position: fixed; left: ${60 * x + 25}px; top: ${y * 50 + 16}px`
                     const nextStation = () => {
                         let result = ''
-                        outer: for (const iterator of next) {
+                        for (const iterator of next) {
                             inner: for (const key in subWay) {
                                 if (subWay.hasOwnProperty(key)) {
                                     const element = subWay[key];
