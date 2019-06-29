@@ -63,12 +63,12 @@
 
 <script>
 import subWay from './line.bak'
-// const subWay = () => import('./line.bak')
-// console.log(subWay)
+import logoURL from './logo'
 import {Select, Option, Form, FormItem, Button, Message, Image} from 'element-ui'
 import {cloneDeep, intersection} from 'lodash'
-// const logo = new Image()
-// logo.src = process.env.BASE_URL + '/sub.jpg'
+const logo = new Image()
+logo.src = logoURL
+console.log(logo)
 let ctx = null
 let prev = {x: null, y: null}
 export default {
@@ -295,7 +295,7 @@ export default {
                         ctx.beginPath()
                         ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
                         ctx.fill()
-                        // ctx.drawImage(logo, x * 60 - 12, y * 50 - 12, 24, 24)
+                        ctx.drawImage(logo, x * 60 - 10, y * 50 - 10, 20, 20)
                         ctx.save()
                         ctx.translate(x * 60, y * 50)
                         ctx.rotate((Math.PI * 2) / 8 * 5)
