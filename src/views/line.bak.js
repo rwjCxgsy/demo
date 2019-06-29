@@ -379,7 +379,6 @@ const line4 = {
             name: '西南财大',
             line: [4],
             position: [4, 6],
-            offset: [0, 16],
             next: ['whg', 'ctbl'],
             textAlign: 'end',
             offset: [0, -16]
