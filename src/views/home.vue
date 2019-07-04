@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Test from './test'
+// import Test from './test'
 export default {
     name: 'home',
-    components: {Test},
+    // components: {Test},
     data () {
         return {
             show: false,
