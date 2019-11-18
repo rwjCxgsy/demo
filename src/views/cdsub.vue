@@ -1,79 +1,23 @@
 <template>
     <div class="cd-sub">
         <canvas id="canvas" ref="map"></canvas>
-        <div class="right">
-            <div>
-                <Form>
-                    <form-item label="选择起始站">
-                        <Select v-model="startLine" placeholder="请选择线开始线路">
-                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="index" />
-                        </Select>  
-                        <Select no-data-text="请选择开始站" v-model="startStation" placeholder="请选择车站">
-                            <Option v-for="(item, index) in startList" :disabled="index === endStation" :key="index" :label="item.name" :value="index" />
-                        </Select>                        
-                    </form-item>
-                    <form-item label="选择结束站">
-                        <Select v-model="endLine" placeholder="请选择线结束线路">
-                            <Option v-for="(item, index) in sub" :key="index" :label="item.name" :value="index" />
-                        </Select>  
-                        <Select no-data-text="请选择结束站" v-model="endStation" placeholder="请选择车站">
-                            <Option v-for="(item, index) in endList" :disabled="index === startStation" :key="index" :label="item.name" :value="index" />
-                        </Select>                        
-                    </form-item>
-                    <form-item label="计算最短路线">
-                        <Button type="primary" @click="planning" :disabled="isplan">计算路程</Button>
-                    </form-item>
-                    <div class="map-show">
-                        <div>
-                            <form-item label="最短路线"/>
-                            <div class="step-map">
-                                <div v-for="(item, index) in mastMinStation" :key="index">
-                                    <i v-if="index === 0">起</i>
-                                    <i v-if="index === mastMinStation.length - 1">始</i>
-                                    <i v-if="item.isChange">转</i>
-                                    <div :style="lineStyle(item.changeLine)">
-                                        <strong>{{index+1}}</strong>
-                                    </div>
-                                    <span>{{item.name}}</span>
-                                    <p>{{item.des}}</p>
-                                </div>
-                            </div>                            
-                        </div>
-                        <div>
-                            <form-item label="最少换乘"/>
-                            <div class="step-map">
-                                <div v-for="(item, index) in mastMinChange" :key="index">
-                                    <i v-if="index === 0">起</i>
-                                    <i v-if="index === mastMinChange.length - 1">始</i>
-                                    <i v-if="item.isChange">转</i>
-                                    <div :style="lineStyle(item.changeLine)">
-                                        <strong>{{index+1}}</strong>
-                                    </div>
-                                    <span>{{item.name}}</span>
-                                    <p>{{item.des}}</p>
-                                </div>
-                            </div>                            
-                        </div>
-                    </div>
-                </Form>
-            </div>
-        </div>
     </div> 
 </template>
 
 <script>
-import subWay from './line.bak'
+import subWay from './line'
 import logoURL from './logo'
-import {Select, Option, Form, FormItem, Button, Message, Image} from 'element-ui'
+import {start} from './subway'
+// import {Select, Option, Form, FormItem, Button, Message, Image} from 'element-ui'
 import {cloneDeep, intersection} from 'lodash'
 const logo = new Image()
 logo.src = logoURL
 console.log(logo)
-let ctx = null
-let prev = {x: null, y: null}
+// let ctx = null
+// let prev = {x: null, y: null}
 export default {
     name: 'cd-subWay',
-    components: {Select, Option, Form, FormItem, Button},
+    // components: {Select, Option, Form, FormItem, Button},
     data () {
         return {
             sub: Object.freeze(subWay),
@@ -254,232 +198,7 @@ export default {
     mounted () {
         this.$nextTick(() => {
             const canvas = this.$refs.map
-            const offset = {x: 0, y: 0}
-            canvas.addEventListener('mousemove', mousemove)
-            function mousemove (e) {
-                const {offsetX, offsetY} = e
-                offset.x = offsetX
-                offset.y = offsetY
-            }
-            const canvasWidth = 1200
-            const canvasHeight = 900
-            canvas.width = canvasWidth
-            canvas.height = canvasHeight
-            ctx = this.$refs.map.getContext('2d')
-
-            class Point {
-                constructor ({position, line, color, next, name, textAlign = 'start', textBaseline = 'middle', direction = 'ltl', offset = [0, 0]}) {
-                    const [x, y] = position
-                    this.x = x
-                    this.y = y
-                    this.color = color
-                    this.line = line
-                    this.next = next
-                    this.name = name
-                    this.textAlign = textAlign
-                    this.textBaseline = textBaseline
-                    this.direction = direction
-                    this.offset = offset
-                    this.radius = 6
-                    this.isActive = false
-                    this.isSelected = false
-                    this.descriptionContainer = null
-                }
-                draw () {
-                    const {color, name, x, y, textAlign, textBaseline, direction, offset, radius} = this
-                    const _color = color[0]
-                    const {length} = color
-                    if (color.length > 1) {
-                        const {length} = color
-                        ctx.fillStyle = '#fff'
-                        ctx.beginPath()
-                        ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
-                        ctx.fill()
-                        ctx.drawImage(logo, x * 60 - 10, y * 50 - 10, 20, 20)
-                        ctx.save()
-                        ctx.translate(x * 60, y * 50)
-                        ctx.rotate((Math.PI * 2) / 8 * 5)
-                        let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
-                        let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
-                        for (let i = 0; i < length; i++) {
-                            ctx.beginPath()
-                            ctx.lineCap = "round"
-                            ctx.lineWidth = radius / 2
-                            ctx.strokeStyle = color[i]
-                            ctx.arc(0, 0, radius * 2, startAngle * i, rangAngle * (i + 1), false)
-                            ctx.stroke()
-                        }
-                        ctx.restore()
-                    } else {
-                        ctx.beginPath()
-                        ctx.arc(x * 60, y * 50, radius, 0, Math.PI * 2, false)
-                        ctx.closePath()
-                        ctx.fillStyle = _color
-                        ctx.fill()
-                    }
-                    ctx.fillStyle = _color
-                    ctx.font = '12px sans-serif'
-                    ctx.textAlign = textAlign
-                    ctx.textBaseline = textBaseline
-                    ctx.direction = direction
-                    ctx.fillText(name, x * 60 + offset[0] + (textAlign === 'end' ? (-16) : (16)) , y * 50 + offset[1])
-                }
-                updata () {
-                    const {x, y , radius} = this
-                    const offsetY = offset.y
-                    const offsetX = offset.x
-                    const isMoveUp = ((x * 60 - offsetX)**2 + (y * 50 - offsetY)**2) <= ((radius+2) ** 2)
-                    if (isMoveUp) {
-                        if (this.radius < 8) {
-                            this.radius += 1
-                        }
-                        if (!this.descriptionContainer) {
-                            this.showDescription()
-                        }
-                    } else {
-                        if (this.radius > 6) {
-                            this.radius -= 1
-                        }
-                        if (this.descriptionContainer) {
-                            this.descriptionContainer.remove()
-                            this.descriptionContainer = null
-                        }
-                    }
-                    this.draw()
-                }
-                showDescription () {
-                    const {x, y, name, line, next, color} = this
-                    let div = this.descriptionContainer = document.createElement('div')
-                    div.classList.add('station-des')
-                    div.style.cssText = `position: fixed; left: ${60 * x + 25}px; top: ${y * 50 + 16}px`
-                    const nextStation = () => {
-                        let result = ''
-                        for (const iterator of next) {
-                            inner: for (const key in subWay) {
-                                if (subWay.hasOwnProperty(key)) {
-                                    const element = subWay[key];
-                                    if (element.list[iterator]) {
-                                        result += element.list[iterator].name
-                                        break inner
-                                    }
-                                }
-                            }
-                            result += '、'
-                        }
-                        result = result.substring(0, result.length - 1) 
-                        return result
-                    }
-                    div.innerHTML = `
-                        <div>
-                            <div>
-                                <strong>名称：</strong>
-                                <span>${name}</span>
-                            </div>
-                            <div>
-                                <strong>线路：</strong>
-                                <span>${line.length === 1 ? line[0] : line.length === 2 ? (line[0] + '号线和' + line[1] + '号线换乘线') : (line[0] + '号线、' + line[1] + '号线和' + line[2] + '号线换乘线') }</span>
-                            </div>
-                            <div>
-                                <strong>相邻站：</strong>
-                                <span>${nextStation()}</span>
-                            </div>
-                        </div>
-                    `
-                    document.body.append(div)
-                }
-            }
-
-            class Line {
-                constructor (lineNumber, line) {
-                    this.lineNumber = lineNumber
-                    this.line = line
-                    this.lineWidth = 3
-                    this.descriptionContainer = null
-                }
-                draw () {
-                    const {line, lineNumber, lineWidth} = this
-                    const list = Object.keys(line)
-                    const {length} = list
-                    const startPosition = line[list[0]]
-                    const [x, y] = startPosition.position
-                    const color = startPosition.color[0]
-                    ctx.strokeStyle = color
-                    ctx.beginPath()
-                    ctx.moveTo(x * 60, y * 50)
-                    ctx.lineWidth = lineWidth
-                    for (let i = 1; i < length; i++) {
-                        const [x, y] = line[list[i]].position
-                        ctx.lineTo(x * 60, y * 50)
-                        if (lineNumber === 'line7' && i === length - 1) {
-                            ctx.closePath()
-                        }
-                        ctx.stroke()
-                    }
-                }
-                updata () {
-                    const {line} = this
-                    const list = Object.keys(line)
-                    for (let i = 0; i < list.length - 1; i++) {
-                        const cur = list[i];
-                        const next = list[i + 1]
-                        if (this.computed(line[cur], line[next])) {
-                            this.lineWidth = 6
-                            break;
-                        } else {
-                            this.lineWidth = 3
-                        }
-                    }
-                    this.draw()
-                }
-                computed (start, end) {
-                    const {x, y} = offset
-                    const [SX, SY] = start.position
-                    const [EX, EY] = end.position
-                    const maxX = Math.max(SX, EX) * 60
-                    const minX = Math.min(SX, EX) * 60
-                    const maxY = Math.max(SY, EY) * 50
-                    const minY = Math.min(SY, EY) * 50
-                    if (x-4 > maxX || x+4 < minX || y-4 > maxY || y+4 < minY) {
-                        return false
-                    }
-                    const k = ((EY - SY) * 50) / ((EX - SX)*60)
-                    let b = SY*50 - SX*60*k
-                    if (!isFinite(k)) {
-                        return Math.abs(x - maxX) <= 4
-                    }
-                    if (k === 0) {
-                        return Math.abs(y - maxY) <= 4
-                    }
-                    return Math.abs(x*k - y + b) <= 4
-                }
-            }
-
-            const stationList = new Set()
-            const lineList = new Set()
-            for (const lineKey in subWay) {
-                const _line = subWay[lineKey].list
-                lineList.add(new Line(lineKey, _line))
-                for (const stationKey in _line) {
-                    const _station = _line[stationKey]
-                    stationList.add(new Point(_station))
-                }
-            }
-            let isDraw = []
-            function animate () {
-                requestAnimationFrame(animate)
-                ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-                for (let line of lineList) {
-                    line.updata()
-                }
-                for (let station of stationList) {
-                    if (!isDraw.includes(station.name)) {
-                        isDraw.push(station.name)
-                        station.updata()
-                    }
-                }
-                isDraw = []
-            }
-            animate()
+            start(canvas)
         })
     }
 }
