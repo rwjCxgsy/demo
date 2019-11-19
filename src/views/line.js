@@ -4,7 +4,6 @@ const line1 = {
     line: 1,
     type: 1,
     color: '#1E51A0',
-    lineColor: 'rgb(122, 175, 255)',
     list: [
         {
             id: 'wjn',
@@ -64,8 +63,8 @@ const line1 = {
             position: [9, 9],
             next: ['tfgc', 'hxb'],
             textAlign: 'end',
-            textBaseline: 'middle',
-            direction: 'rtl'
+            // textBaseline: 'middle',
+            // direction: 'rtl'
         },
         {
             id: 'hxb',
@@ -80,7 +79,8 @@ const line1 = {
             name: '省体育馆',
             line: [1, 3],
             position: [9, 13],
-            next: ['hxb', 'njq', 'ygm', 'mzq']
+            next: ['hxb', 'njq', 'ygm', 'mzq'],
+            // textAlign: 'end'
         },
         {
             id: 'njq',
@@ -120,7 +120,6 @@ const line2 = {
     type: 1,
     line: 2,
     color: '#f7945b',
-    lineColor: '#ffd4bb',
     list: [
         {
             id: 'yxlj',
@@ -251,13 +250,12 @@ const line3 = {
     type: 1,
     line: 3,
     color: '#ed008c',
-    lineColor: '#ff7cc8',
     list: [
         {
             id: 'zjsnl',
             name: '昭觉寺南路',
             line: [3],
-            position: [13, 2],
+            position: [13, 1],
             next: ['smq']
         },
         {
@@ -371,7 +369,6 @@ const line4 = {
     type: 1,
     line: 4,
     color: '#01ab53',
-    lineColor: '#9affcb',
     list: [
         {
             id: 'qjxl',
@@ -491,8 +488,7 @@ const line7 = {
     type: 0,
     line: 7,
     name: '七号线',
-    color: '#88d4e4',
-    lineColor: '#c1f2fc',
+    color: '#c1f2fc',
     list: [
         {
             id: 'hcbz',
@@ -758,8 +754,8 @@ const line10 = {
 export default {
     line1,
     line2,
-    // line3,
-    // line4,
-    // line7,
-    // line10
+    line3,
+    line4,
+    line7,
+    line10
 }

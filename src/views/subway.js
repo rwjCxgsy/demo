@@ -1,5 +1,19 @@
 import { cloneDeep, intersection } from 'lodash'
 import subWay from './line'
+import logoURL from './logo'
+const logo = new Image();
+!(async () => {
+    function load () {
+        return new Promise(r => {
+            logo.src = logoURL
+            logo.onload = () => {
+                r()
+            }
+        })
+    }
+    await load()
+})()
+
 let ctx = null
 const offset = {
     x: 0,
@@ -40,41 +54,48 @@ class SubwayStation {
         this.isActive = false
         this.isSelected = false
         this.descriptionContainer = null
+        this.isDraw = false
         stationList.push(this)
     }
     draw() {
-        const { color, name, x, y, textAlign, textBaseline, direction, offset, radius } = this
-        const _color = color[0]
-        const { length } = color
-        if (color.length > 1) {
-            const { length } = color
-            ctx.fillStyle = '#fff'
-            ctx.beginPath()
-            ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
-            ctx.fill()
-            ctx.drawImage(logo, x * 60 - 10, y * 50 - 10, 20, 20)
-            ctx.save()
-            ctx.translate(x * 60, y * 50)
-            ctx.rotate((Math.PI * 2) / 8 * 5)
-            let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
-            let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
-            for (let i = 0; i < length; i++) {
-                ctx.beginPath()
-                ctx.lineCap = "round"
-                ctx.lineWidth = radius / 2
-                ctx.strokeStyle = color[i]
-                ctx.arc(0, 0, radius * 2, startAngle * i, rangAngle * (i + 1), false)
-                ctx.stroke()
-            }
-            ctx.restore()
-        } else {
-            ctx.beginPath()
-            ctx.arc(x * 60, y * 50, radius, 0, Math.PI * 2, false)
-            ctx.closePath()
-            ctx.fillStyle = _color
-            ctx.fill()
-        }
-        ctx.fillStyle = _color
+        const { name, x, y, textAlign, textBaseline, direction, offset, radius, line, isDraw = false} = this
+        if (isDraw) {return}
+        this.isDraw = true
+        const color = line[0].color
+        const { length } = line
+        ctx.beginPath()
+        ctx.arc(x * 60, y * 50, radius, 0, Math.PI * 2, false)
+        ctx.closePath()
+        ctx.fillStyle = color
+        ctx.fill()
+        // if (length > 1) {
+        //     ctx.fillStyle = '#fff'
+        //     ctx.beginPath()
+        //     ctx.arc(x * 60, y * 50, radius * 2, 0, Math.PI * 2, false)
+        //     ctx.fill()
+        //     ctx.drawImage(logo, x * 60 - 10, y * 50 - 10, 20, 20)
+        //     ctx.save()
+        //     ctx.translate(x * 60, y * 50)
+        //     ctx.rotate((Math.PI * 2) / 8 * 5)
+        //     let startAngle = length == 3 ? (Math.PI * 2) / 3 : Math.PI
+        //     let rangAngle = length == 2 ? Math.PI : Math.PI / 3 * 2
+        //     for (let i = 0; i < length; i++) {
+        //         ctx.beginPath()
+        //         ctx.lineCap = "round"
+        //         ctx.lineWidth = radius / 2
+        //         ctx.strokeStyle = color[i]
+        //         ctx.arc(0, 0, radius * 2, startAngle * i, rangAngle * (i + 1), false)
+        //         ctx.stroke()
+        //     }
+        //     ctx.restore()
+        // } else {
+        //     ctx.beginPath()
+        //     ctx.arc(x * 60, y * 50, radius, 0, Math.PI * 2, false)
+        //     ctx.closePath()
+        //     ctx.fillStyle = color
+        //     ctx.fill()
+        // }
+        ctx.fillStyle = color
         ctx.font = '12px sans-serif'
         ctx.textAlign = textAlign
         ctx.textBaseline = textBaseline
@@ -155,6 +176,7 @@ class Line {
         this.color = color
         this.descriptionContainer = null
         this.stations = []
+        this.prevDirection = {}
         for (const station of list) {
             const r = findStation(station, this)
             if (r) {
@@ -166,22 +188,108 @@ class Line {
     }
     draw() {
         const {name, width, stations: list } = this
+        // const direction = ''
         const { length } = list
-        const startPosition = list[0]
-        const {x, y} = startPosition
+        const [ startPosition ] = list
+        let {x: x1, y: y1} = startPosition
         const color = startPosition.color
         ctx.strokeStyle = color
-        ctx.beginPath()
-        ctx.moveTo(x * 60, y * 50)
         ctx.lineWidth = width
+        list[0].draw()
         for (let i = 1; i < length; i++) {
-            const {x, y} = list[i]
-            
-            ctx.lineTo(x * 60, y * 50)
-            if (name === 'line7' && i === length - 1) {
-                ctx.closePath()
-            }
+            ctx.beginPath()
+            const {x: x2, y: y2} = list[i]
+            const arc = this.getK(x1, y1, x2, y2)
+            ctx.moveTo(x1 * 60 + Math.sin(arc) * 8, y1 * 50 + Math.cos(arc) * 8)
+            ctx.lineTo(x2 * 60 - Math.sin(arc) * 8, y2 * 50 - Math.cos(arc) * 8)
+            x1 = x2
+            y1 = y2
+            // if (name === 'line7' && i === length - 1) {
+            //     ctx.closePath()
+            // }
+            ctx.closePath()
             ctx.stroke()
+            list[i].draw()
+        }
+    }
+    getK (x1, y1, x2, y2) {
+        if (x1 === x2) {
+            return y2 > y1 ? 0 : Math.PI
+        }
+        if (y1 === y2) {
+            return x2 < x1 ? (- Math.PI / 2) : Math.PI / 2
+        }
+        if (y2 < y1) {
+            console.log(x1, y1, x2, y2)
+            return Math.atan((x2 - x1) / (y2 - y1))
+        } else {
+            return Math.atan((y2 - y1) / (x2 - x1))
+        }
+    }
+    quadraticCurvePoint (x1, y1, x2, y2, ctx) {
+        let {prevDirection} = this
+        const bxy = null
+        let direction = ''
+        const p = {
+            lt: 'rb',
+            lb: 'rt',
+            rb: 'lt',
+            rt: 'lb',
+            l: 'r',
+            r: 'l',
+            t: 'b',
+            b: 't'
+        }
+        if (x1 === x2) {
+            if (y2 > y1) {
+                direction = 'lr'
+            } else {
+                direction = 'rl'
+            }
+        } else if (y1 === y2) {
+            if (x2 > x1) {
+                direction = 'bt'
+            } else {
+                direction = 'tp'
+            }
+        } else {
+            if (x2 > x1 && y2 > y1) {
+                direction = 'ltrb' // 左上到右下
+            }
+            if (x2 < x1 && y2 < y1) {
+                direction = 'rblt' // 右下到左上
+            }
+            if (x2 > x1 && y2 < y1) {
+                direction = 'lbrt' // 左下到右上
+            }
+            if (x2 < x1 && y2 > y1) {
+                direction = 'rtlb' // 右上到左下
+            }
+            
+        }
+        if (prevDirection === '') {
+            prevDirection = direction
+        } else if (prevDirection === 'lr') {
+            if (direction === 'tb') {
+                bxy = {
+                    x: x1 + y2 - y1 ,
+                    y: y1 + ((y2 - y1) / 2),
+                }
+            } else if (direction === 'bt') {
+                bxy = {
+                    x: x1 + y1 - y2 ,
+                    y: y1 - ((y1 - y2) / 2),
+                }
+            } else {
+                bxy = {
+                    x: x1 + y2 - y1 ,
+                    y: x1 + ((x2 - x1) / 2),
+                }
+            }
+        } else if (prevDirection === 'bt') {
+
+        } else {
+            
         }
     }
     updata() {
@@ -246,7 +354,7 @@ function launch(canvas) {
     console.log(lineList, stationList)
     let isDraw = []
     function animate() {
-        requestAnimationFrame(animate)
+        // requestAnimationFrame(animate)
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
         for (let line of lineList) {
             line.updata()
