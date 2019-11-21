@@ -1,19 +1,19 @@
 <template>
-  <div class="cd-sub">
-    <canvas id="canvas1" ref="map1"></canvas>
-    <canvas id="canvas2" ref="map2"></canvas>
+  <div class="cd-sub" id="cdSub" ref="cdSub">
+    <!-- <canvas id="canvas1" ref="map1"></canvas>
+    <canvas id="canvas2" ref="map2"></canvas> -->
   </div>
 </template>
 
 <script>
 import subWay from "./line";
-import logoURL from "./logo";
-import { start } from "./subway";
+// import logoURL from "./logo";
+import { start } from "./subway/index.js";
 // import {Select, Option, Form, FormItem, Button, Message, Image} from 'element-ui'
 import { cloneDeep, intersection } from "lodash";
-const logo = new Image();
-logo.src = logoURL;
-console.log(logo);
+// const logo = new Image();
+// logo.src = logoURL;
+// console.log(logo);
 // let ctx = null
 // let prev = {x: null, y: null}
 export default {
@@ -198,9 +198,10 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      const canvas1 = this.$refs.map1;
-      const canvas2 = this.$refs.map2;
-      start(canvas1, canvas2);
+      const wrap = this.$refs.cdSub;
+      start(wrap, 1200, 900)
+      // const canvas2 = this.$refs.map2;
+      // start(canvas1, canvas2);
     });
   }
 };
@@ -209,6 +210,7 @@ export default {
 <style lang="less">
 canvas {
     position: absolute;
+    background-color: #eee;
     left: 0;
     top: 0;
 }
