@@ -93,6 +93,7 @@ class CitySubway {
             }
             this.path.create(pointer)
             if (this.endStation) {
+                this.path.scheme = Object.create(null)
                 this.path.updata()
             }
         })
