@@ -2,21 +2,10 @@ import { lineColor } from './date'
 import {colorMinix} from '@/utils'
 import Segment from './line'
 
-const logo = new Image();
+const logo = document.createElement('img');
 import logoURL from '../logo'
-!(async () => {
-    function load () {
-        return new Promise(r => {
-            logo.src = logoURL
-            logo.onload = () => {
-                r()
-            }
-        })
-    }
-    await load()
-})()
-
-let prepStation = null
+logo.src = logoURL
+// let prepStation = null
 
 let k = 1
 class SubwayStation {
@@ -92,11 +81,6 @@ class SubwayStation {
         ctx.direction = direction
         ctx.fillText(name, x * GX + offset[0] + (textAlign === 'end' ? (-16) : (16)), y * GY + offset[1])
         ctx.restore()
-        // if (prepStation) {
-        //     new Segment(prepStation, this)
-        // } else {
-        //     prepStation = this
-        // }
     }
     updata() {
         const { x, y, radius, root } = this

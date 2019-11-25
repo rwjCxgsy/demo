@@ -4,9 +4,7 @@
 </template>
 
 <script>
-import subWay from "./line";
 import { start } from "./subway/index.js";
-import { cloneDeep, intersection } from "lodash";
 export default {
   name: "cd-subWay",
   mounted() {
