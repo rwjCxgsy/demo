@@ -1,77 +1,92 @@
+import {lineColor} from './date'
+
 class Line {
-    constructor(subwayLine, ctx, root) {
-        const {line, value, color, list} = subwayLine
-        this.name = value
-        this.ctx = ctx
-        this.width = 5
-        this.line = line
-        this.color = color
-        this.descriptionContainer = null
-        this.stations = []
-        this.prevDirection = {}
-        // this.active = false
-        for (const station of list) {
-            const r = findStation(station, this)
-            if (r) {
-                this.stations.push(r)
+    constructor () {
+        this.child = Object.create(null)
+    }
+    updata () {
+        const {child, focus} = this
+        for (const key in child) {
+            const item = child[key]
+            if (focus) {
+                item.width = 8
             } else {
-                this.stations.push(new SubwayStation(station, this))
+                item.width = 5
             }
+            item.draw()
         }
     }
-    draw() {
-        const {name, width, stations: list, ctx, color } = this
-        console.log(this)
-        // const direction = ''
-        const { length } = list
-        let [ ins ] = list
-        let {x: x1, y: y1} = ins
+}
+
+const lines = Object.create(null)
+
+for (const key in lineColor) {
+    if (lineColor.hasOwnProperty(key)) {
+        const line = lineColor[key];
+        lines[key] = new Line()
+    }
+}
+
+console.log(lines)
+
+class Segment {
+    constructor (prep, next, ctx) {
+        const {x: px, y: py, root, line: pline} = prep
+        const {x: nx, y: ny, line: nline} = next
+        this.prep = prep
+        this.next = next
+        this.root = root
+        this.ctx = ctx
+        this.px = px
+        this.py = py
+        this.nx = nx
+        this.ny = ny
+        let line = pline.find(v => (nline.includes(v)))
+        const color = (lineColor[line])
+        this.originLine = line
+        this.color = color
+        this.width = 4
+        this.id = prep.key * next.key
+        lines[line].child[this.id] = this
+        this.father = lines[line]
+    }
+    draw () {
+        const {px, py, nx, ny, color, width, root, ctx} = this
+        const {GX, GY} = root
         ctx.strokeStyle = color
         ctx.lineWidth = width
         ctx.lineCap = "round"
-        ins.draw()
-        for (let i = 0; i < length; i++) {
-            const {x: x2, y: y2} = ins = list[i]
-            ctx.beginPath()
-            ctx.moveTo(x1 * GX, y1 * GY)
-            ctx.lineTo(x2 * GX, y2 * GY)
-            x1 = x2
-            y1 = y2
-            if (name === 'line7' && i === length - 1) {
-                x2 = list[0].x
-                y2 = list[0].y
-                ctx.moveTo(x1 * GX, y1 * GY)
-                ctx.lineTo(x2 * GX, y2 * GY)
-            }
-            ctx.stroke()  
-            // ctx.closePath()
-            ins.updata()
-        }
+        ctx.beginPath()
+        ctx.moveTo(px * GX, py * GY)
+        ctx.lineTo(nx * GX, ny * GY)
+        ctx.closePath()
+        ctx.stroke()
     }
-    updata() {
-        // const { line } = this
-        // const list = Object.keys(line)
-        const {stations: list} = this
-        for (let i = 0; i < list.length - 1; i++) {
-            const cur = list[i];
-            const next = list[i + 1]
-            if (this.computed(cur, next)) {
-                if (this.width === 8) {
-                    break
-                }
-                this.width += 1
-                break;
-            } else {
-                if (this.width === 5) {
-                    break
-                }
-                this.width -= 1
-            }
+    updata () {
+        const {px, py, nx, ny, root} = this
+        const {GX, GY, offset: mouse} = root
+        const cur = {
+            x: px,
+            y: py
         }
-        this.draw()
+        const next = {
+            x: nx,
+            y: ny
+        }
+        const offset = {
+            GX,
+            GY,
+            ...mouse
+        }
+        if (this.computed(cur, next, offset)) {
+            this.father.focus = true
+        } else {
+            this.father.focus = false
+        }
+        this.father.updata()
     }
-    computed(start, end) {
-        const { x, y } = offset
+    computed(start, end, offset) {
+        const { x, y, GX, GY } = offset
         const SX = start.x
         const SY = start.y
         const EX = end.x
@@ -95,20 +110,8 @@ class Line {
     }
 }
 
-class Segment {
-    constructor (prep, next) {
-        const {x: px, y: py, root, line: pline} = prep
-        const {x: nx, y: ny, line: nline} = next
-        this.px = px
-        this.py = py
-        this.nx = nx
-        this.ny = ny
-        console.log(pline.name, nline.name)
-        // this.start = start
-        // this.end = end
-        // this.color = color
-        // this.width = width
-    }
-}
 
-export default Segment
+export { 
+    Line,
+    Segment
+}

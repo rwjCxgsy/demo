@@ -162,7 +162,7 @@ const station = [
         next: ['smq']
     },
     {
-		id: "jjt",
+		id: "ljt",
         name: '李家沱',
         line: [3],
         position: [12, 4],
@@ -173,7 +173,7 @@ const station = [
         name: '前锋路',
         line: [3],
         position: [12, 5],
-        next: ['jjt', 'hxl'],
+        next: ['ljt', 'hxl'],
     },
     {
 		id: "hxl",
@@ -270,7 +270,9 @@ const station = [
         name: '中医大省医院',
         line: [4, 2],
         position: [7, 6],
-        next: ['ctbl', 'kzxz', 'thm', 'ggl'],
+        next: ['ctbl', 'kzxz', 'thm', 'bgl'],
+        offset: [0, -20],
+        textAlign: 'center',
     },
     {
 		id: "kzxz",
@@ -278,7 +280,7 @@ const station = [
         line: [4],
         position: [8, 6],
         offset: [0, 16],
-        textAlign: 'end',
+        textAlign: 'center',
         next: ['zydsyy', 'lms'],
     },
     {
@@ -286,7 +288,8 @@ const station = [
         name: '骡马市',
         line: [4, 1],
         position: [9, 6],
-        next: ['kzxz', 'tsnl', 'tfgc', 'wsy']
+        next: ['kzxz', 'tsnl', 'tfgc', 'wsy'],
+        offset: [0, 16]
     },
     {
 		id: "tsnl",
@@ -339,13 +342,15 @@ const station = [
         name: '火车北站',
         line: [7, 1],
         position: [9, 3],
-        next: ['bzxel', 'smq', 'rmbl', 'sxf']
+        next: ['bzxel', 'smq', 'rmbl', 'sxf'],
+        offset: [0, 16]
     },
     {
 		id: "smq",
         name: '驷马桥',
         line: [7, 3],
         position: [12, 3],
+        offset: [0, 16],
         next: ['hcbz', 'fql', 'ljt', 'zjsnl']
     },
     {
@@ -396,7 +401,8 @@ const station = [
         name: '槐树站',
         line: [7, 4],
         position: [16, 8],
-        next: ['sdl', 'yhl', 'wnc', 'll']
+        next: ['sdl', 'yhl', 'wnc', 'll'],
+        offset: [0, 16]
     },
     {
 		id: "yhl",
@@ -500,9 +506,10 @@ const station = [
     {
 		id: "whg",
         name: '文化宫',
-        line: [7, 3],
+        line: [7, 4],
         position: [2, 6],
-        next: ['dpl', 'jsbwg', 'xncd', 'qjxl']
+        next: ['dpl', 'jsbwg', 'xncd', 'qjxl'],
+        offset: [0, 16]
     },
     {
 		id: "jsbwg",
@@ -516,7 +523,8 @@ const station = [
         name: '一品天下',
         line: [7, 2],
         position: [3, 3],
-        next: ['jsbwg', 'cdz', 'shld', 'yxlj']
+        next: ['jsbwg', 'cdz', 'shld', 'yxlj'],
+        offset: [0, -16]
     },
     {
 		id: "cdz",
@@ -564,6 +572,7 @@ const station = [
         name: '太平园',
         line: [10, 7, 3],
         position: [2, 16],
+        offset: [0, 16],
         next: ['czlj', 'gpdd', 'whdd', 'hpl', 'zj']
     },
     {
@@ -581,116 +590,11 @@ const lineColor = {
     2: '#f7945b',
     3: '#ed008c',
     4: '#01ab53',
-    7: '#c1f2fc',
+    7: '#51d2dc',
     10: '#000000'
 }
 
-let GOD = null
-
-class Node {
-    constructor (option) {
-        const {next} = option
-        for (const key in option) {
-            if (option.hasOwnProperty(key)) {
-                const element = option[key];
-                this[key] = element
-            }
-        }
-        this.near = Object.create(null)
-        next.forEach(v => {
-            this.near[v] = true
-        })
-        // delete this.next
-    }
-}
-
-
-// function add (root, node) {
-//     const {next} = root
-//     for (const key in next) {
-//         const item = next[key]
-//         if (key === node.id) {
-//             const i = node.next.indexOf(key)
-//             root.next[key] = node
-//             node.next[i] = root
-//             return true
-//         }
-//     }
-// }
-
-const overNode = new Set()
-
-function find (root, node) {
-    let isLook = false
-    if (!GOD) {
-        GOD = node
-        return true
-    } else {
-        console.log(root instanceof Node, root.name)
-        if (!(root instanceof Node)) {
-            return false
-        }
-        if (root.near[node.id]) {
-            root.near[node.id] = node
-            node.near[root.id] = root
-            return true
-        } else {
-            overNode.add(root.id)
-        }
-        const {near} = root
-        // // i 表示 id
-        for (const id in near) {
-            if (!overNode.has(node.id)) {
-                overNode.add(node.id)
-                isLook = Chart(root.near[id], node)
-                overNode.delete(node.id)
-            }
-        }
-    }
-    return isLook
-}
-
-
-function Chart (root, node) {
-    console.log(find(root, node))
-    // if (find(root, node)) {
-
-    // } else {
-    //     // const i = station.indexOf(node)
-    //     // station.splice(i, 1).push(node)
-    // }
-}
-
-// const nodes = Object.create(null)
-
-console.time('map')
-
-const nodes = []
-
-for (const i in station) {
-    const item = station[i]
-    const node = new Node(item)
-    station[i] = node
-    // nodes[node.id] = node
-    // Chart(GOD, node)
-    Chart(GOD, node)
-}
-
-console.log(GOD)
-
-// for (const id in nodes) {
-//     const item = nodes[id]
-    
-//     item.next.forEach(v => {
-//         item.near[v] = nodes[v]
-//     })
-//     delete item.next
-// }
-console.timeEnd('map')
-// console.log(nodes)
-
-
 export {
-    GOD as list,
+    station as list,
     lineColor
 }
