@@ -20,6 +20,14 @@ export default new vueRouter({
         {
             path: '/cdsub',
             component: () => import('./views/cdsub'),
+        },
+        {
+            path: '/scroll',
+            component: () => import('./views/scroll'),
+        },
+        {
+            path: '/fall',
+            component: () => import('./views/fall'),
         }
     ]
 })
