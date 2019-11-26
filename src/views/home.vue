@@ -2,7 +2,7 @@
     <div class="home">
         <router-link to="/cdsub">成都地图</router-link>
         <router-link to="/range">日期选择器</router-link>
-        <router-link to="/scroll">scroll</router-link>
+        <!-- <router-link to="/scroll">scroll</router-link> -->
         <router-link to="/fall">fall</router-link>
     </div>
 </template>
