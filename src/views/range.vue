@@ -1,7 +1,7 @@
 <template>
     <div class="range">
         <button @click="() => {show = true}">打开</button>
-        <Range v-model="show" :date-range="dateRange" @change="onChange" may-day="301"/>
+        <Range v-model="show" :date-range="dateRange" @change="onChange" may-day="30"/>
         <p>选择了</p>
         <ul>
             <li v-for="(item, i) in list" :key="i">{{item}}</li>
