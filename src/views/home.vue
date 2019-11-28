@@ -1,23 +1,20 @@
 <template>
     <div class="home">
-        <div>
-            <router-link to="/cdsub">成都地图</router-link>
-            <router-link to="/range">日期选择器</router-link>
-            <!-- <router-link to="/scroll">scroll</router-link> -->
-            <router-link to="/fall">fall</router-link>
-            <button class="light-button" @click="onClick">
-                <span class="text">按钮</span>
-                <span class="shine" ref="shine"></span>
-            </button>
+        <div class="utils">
+            <XgButton @click="jump('/cdsub', $event)">成都地图</XgButton>
+            <XgButton @click="jump('/range')">日期选择器</XgButton>
+            <XgButton @click="jump('/fall')">fall</XgButton>
+            <div class="box"></div>
         </div>
     </div>
 </template>
 
 <script>
 // import Test from './test'
+import XgButton from '../components/xgButton'
 export default {
     name: 'home',
-    // components: {Test},
+    components: {XgButton},
     data () {
         return {
             show: false,
@@ -25,32 +22,39 @@ export default {
         }
     },
     methods: {
-        onClick (e) {
-            const {layerX, offsetX, offsetY, layerY} = e
-            console.log(offsetX, offsetY)
-            const {shine} = this.$refs;
-            (() => {
-                const span = document.createElement('span')
-                span.className = 'light'
-                shine.append(span)
-                console.log(document.querySelectorAll('.light'))
-                // setTimeout(() => {
-                    span.style.left = layerX + 'px'
-                    span.style.top = layerY + 'px'
-                    span.style.opacity = '0'
-                    // span.style.backgroundColor = '#' + Math.random().toString(16).substr(2, 6)
-                    span.style.transform = 'translate(-50%, -50%) scale(1)'                
-                // }, 10);
-                setTimeout(() => {
-                    span.remove()
-                }, 500);
-            })()
-        }
+        jump (path, e) {
+            console.log(e)
+            setTimeout(() => {
+                this.$router.push(path)
+            }, 600)
+        } 
     }
 }
 </script>
 
 <style lang="less">
+    .box{
+        width: 100px;
+        height: 100px;
+        color: #23b7cb;
+        font-size: 15px;
+        padding: 5px 15px;
+        background: #fff;
+        border: 1px transparent solid;
+        border-radius: 30px;
+        position: relative;
+        margin-top: 20px;
+    }
+    .box::after {
+        content:'';
+        position: absolute;
+        top: -3px; bottom: -3px;
+        left: -3px; right: -3px;
+        background: linear-gradient(135deg,#000781, #23b7cb);
+        border-radius: 30px;
+        z-index: -1;
+    }
+
     a {
         display: block;
         height: 30px;
@@ -59,42 +63,10 @@ export default {
         display: flex;
         justify-content: center;
     }
-    .light-button {
-        position: relative;
-        outline: none;
-        border: 0;
-        background-color: #1976d2;
-        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
-        padding: 6px 16px;
-        cursor: pointer;
-        -webkit-tap-highlight-color:transparent;
-        border-radius: 4px;
-        .text {
-            color: #fff;
-            font-size: 18px;
-            z-index: -1;
-        }
-        .shine {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: inherit;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 2;
-            .light {
-                position: absolute;
-                display: block;
-                width: 200px;
-                height: 200px;
-                background-color: rgba(255, 255, 255, 0.5);
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0);
-                transition: all 0.5s linear;
-                border-radius: 50%;
-            }
+    .utils {
+        button {
+            display: block;
+            margin-top: 20px;
         }
     }
 </style>
