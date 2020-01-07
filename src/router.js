@@ -28,6 +28,10 @@ export default new vueRouter({
         {
             path: '/fall',
             component: () => import('./views/fall'),
+        },
+        {
+            path: '/three',
+            component: () => import('./views/three'),
         }
     ]
 })

@@ -4,7 +4,8 @@
             <XgButton @click="jump('/cdsub', $event)">成都地图</XgButton>
             <XgButton @click="jump('/range')">日期选择器</XgButton>
             <XgButton @click="jump('/fall')">fall</XgButton>
-            <div class="box"></div>
+            <XgButton @click="jump('/three')">3d</XgButton>
+            <!-- <div class="box"></div> -->
         </div>
     </div>
 </template>

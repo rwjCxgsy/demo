@@ -70,7 +70,7 @@ class Path {
         const minChange = compare.map(v => changeNumber(v)).sort((a, b) => (a > b ? 1 : -1))[0]
         let k = 1
         compare.forEach(v => {
-            if (minChange == changeNumber(v)) {
+            if (minChange === changeNumber(v)) {
                 this.scheme[k++] = v
             }
         })

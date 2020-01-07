@@ -38,6 +38,7 @@ class Boll {
         const {height} = root
         this.y += vy;
         this.vy += g;
+        console.log(vy, g)
         if (Math.abs(this.vy) - 2 <= 0) {
             this.maxHieght = this.y
         }
@@ -87,11 +88,10 @@ class Fall {
         for (const ball of child) {
             if (ball.destory) {
                 child.delete(ball)
-            } else {
-                ball.updata()
+                continue
             }
+            ball.updata()
         }
-        console.log(child.size)
     }
 }
 
