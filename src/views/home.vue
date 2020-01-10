@@ -5,6 +5,7 @@
             <XgButton @click="jump('/range')">日期选择器</XgButton>
             <XgButton @click="jump('/fall')">fall</XgButton>
             <XgButton @click="jump('/three')">3d</XgButton>
+            <XgButton @click="jump('/edit')">canvas打字</XgButton>
             <!-- <div class="box"></div> -->
         </div>
     </div>

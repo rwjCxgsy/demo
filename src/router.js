@@ -32,6 +32,10 @@ export default new vueRouter({
         {
             path: '/three',
             component: () => import('./views/three'),
+        },
+        {
+            path: '/edit',
+            component: () => import('./views/edit/index.vue'),
         }
     ]
 })
