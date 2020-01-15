@@ -12,6 +12,7 @@
     "compression-webpack-plugin": "^3.0.0",
     "core-js": "^2.6.5",
     "element-ui": "^2.9.1",
+    "husky": "^4.0.9",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
     "three": "^0.111.0",
@@ -56,5 +57,15 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node scripts/verify-commit-msg.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
 }
