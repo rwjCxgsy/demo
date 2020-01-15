@@ -15,6 +15,7 @@
     "husky": "^4.0.9",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
+    "pre-commit": "^1.2.2",
     "three": "^0.111.0",
     "vue": "^2.6.10",
     "vue-ls": "^3.2.1",
@@ -58,9 +59,11 @@
     "> 1%",
     "last 2 versions"
   ],
-  "gitHooks": {
-    "pre-commit": "lint-staged",
-    "commit-msg": "node scripts/verify-commit-msg.js"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "echo $HUSKY_GIT_PARAMS"
+    }
   },
   "lint-staged": {
     "*.js": [
