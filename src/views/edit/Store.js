@@ -1,5 +1,14 @@
 import Observer from "./Observe";
 
+// const content = new Proxy({}, {
+//     get(target, p, receiver) {
+//         return
+//     },
+//     set(target, p, value, receiver) {
+//
+//     }
+// })
+
 class Store {
     constructor() {
         this.focus = false
@@ -24,6 +33,19 @@ class Store {
                 }
             }
             this.forceUpdate()
+        })
+
+        Observer.on('move', data => {
+            const {type, index} = data
+            console.log(type, index)
+            const item = Store._content[index]
+            Store._content.splice(index, 1)
+            if (type === 'up') {
+                Store._content.splice(index - 1, 0, item)
+            } else {
+                Store._content.splice(index + 1, 0, item)
+            }
+            Observer.emit('zoom', Store._content)
         })
     }
 
@@ -88,20 +110,16 @@ class Store {
         // }
         for (let content of sort) {
             if (content.show) {
+                ctx.save()
                 content.update()
+                ctx.restore()
             }
         }
     }
 
     riseContent (rise = true) {
         let clone = [...Store._content]
-        return clone.sort((a, b) => {
-            if (rise) {
-                return a.zIndex > b.zIndex ? 1 : -1
-            } else {
-                return a.zIndex < b.zIndex ? 1 : -1
-            }
-        })
+        return rise ? clone : clone.reverse()
     }
 
     static _content = []
@@ -115,6 +133,7 @@ class Store {
     addContent (container) {
         console.log(Store._content)
         Store._content.push(container)
+        Observer.emit('zoom', Store._content)
     }
 
 }

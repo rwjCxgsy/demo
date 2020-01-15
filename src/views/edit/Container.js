@@ -1,4 +1,6 @@
 import Store from "./Store";
+let rotateUrl = require('../../assets/rotate.png'), rotateImg = document.createElement('img')
+rotateImg.src = rotateUrl
 
 export class Container {
     constructor (x = 0, y = 0, width = 0, height = 0, name = '') {
@@ -13,17 +15,22 @@ export class Container {
         this.y = y
         this.name = name
         this.color = '#' + Math.random().toString(16).slice(2,8)
-        this.transform = {}
+        this.rotate = 0
         this.lineDashOffset = 0
+        this.luck = false
     }
 
     renderWrap () {
-        let {x, y, width, height, color, focus, lineDashOffset} = this
-        if (!focus) {
-            return
-        }
+        let {x, y, width, height, color, focus, lineDashOffset, luck} = this
+        // if (!focus) {
+        //     return
+        // }
+        let rectCenterPointX = width / 2
+        let rectCenterPointY = height / 2
         const {ctx} = Store
-        ctx.save()
+        ctx.translate(x + rectCenterPointX, y + rectCenterPointY)
+        ctx.rotate(45 * Math.PI / 180);
+        ctx.translate(-rectCenterPointX, -rectCenterPointY)
         if (lineDashOffset > 50) {
             this.lineDashOffset = -1
         }
@@ -36,13 +43,18 @@ export class Container {
         ctx.strokeStyle = color
         ctx.lineWidth = 1
         ctx.setLineDash([10, 5]);
-        ctx.strokeRect(x, y, width, height);
-        ctx.restore()
+        ctx.strokeRect(0, 0, width, height);
+        if (luck) {
+            ctx.drawImage(rotateImg, (width / 2) - 9, - 30, 18, 18)
+        }
     }
     isFocus () {
+        const {x, y, width, height, luck} = this
+        if (luck) {
+            return true
+        }
         const {mouse} = Store
         const {layerX = 0, layerY = 0} = mouse
-        const {x, y, width, height} = this
         if (layerX >= x && layerX <= (x + width) && layerY >= y && layerY <= (y + height)) {
             return this
         }

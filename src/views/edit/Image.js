@@ -8,12 +8,12 @@ class ImageContainer extends Container{
         this.img = img
     }
     render () {
-        const {img, width, height, x, y} = this
+        const {img, width, height} = this
         if (!img) {
             return
         }
         const {ctx} = Store
-        ctx.drawImage(img, x, y, width, height)
+        ctx.drawImage(img, 0, 0, width, height)
     }
 }
 
