@@ -48,7 +48,6 @@ export default {
             scroll.style.transform = `translate(0, ${clientY - prevPlace + scrollTop}px)`
         },
         onTouchEnd (e) {
-            // const {clientX, clientY} = e.touches[0]
             scrollTop = handY - prevPlace + scrollTop
             this.isTouch = false
             startSpeed = 0
