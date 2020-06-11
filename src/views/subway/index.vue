@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { start } from "./subway/index.js";
+import { start } from "./start.js";
 export default {
   name: "cd-subWay",
   mounted() {
