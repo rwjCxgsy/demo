@@ -113,11 +113,12 @@ class SubwayStation {
         this.draw()
     }
     showDescription() {
-        const { x, y, name, line, root, near } = this
-        const {GX, GY} = root
+        const {name, line, root, near } = this
+        const {offset} = root
+        console.log(offset.pageX, offset.pageY)
         let div = this.descriptionContainer = document.createElement('div')
         div.classList.add('station-des')
-        div.style.cssText = `position: fixed; left: ${GX * x + 25}px; top: ${y * GY + 16}px`
+        div.style.cssText = `position: fixed; left: ${offset.pageX}px; top: ${offset.pageY}px`
         const nextStation = () => {
             let result = ''
             for (const key in near) {

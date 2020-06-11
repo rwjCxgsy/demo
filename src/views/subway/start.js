@@ -67,9 +67,11 @@ class CitySubway {
         container.append(path)
 
         path.addEventListener('mousemove', e => {
-            const { offsetX, offsetY } = e
+            const { offsetX, offsetY, pageX, pageY } = e
             this.offset.x = offsetX
-            this.offset.y = offsetY    
+            this.offset.y = offsetY
+            this.offset.pageX = pageX
+            this.offset.pageY = pageY
         })
         path.addEventListener('click', e => {
             const {pointer, pathCTX, width, height} = this
