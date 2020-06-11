@@ -1,3 +1,9 @@
+/*
+ * @Author: renweijun@doctorwork.com
+ * @LastEditTime: 2020-06-11 15:48:37
+ * @Description: 
+ * @FilePath: /demo/src/main.js
+ */ 
 import Vue from 'vue'
 import App from './App.vue'
 import VueMeta from 'vue-meta';
@@ -6,6 +12,7 @@ import Storage from 'vue-ls';
 import Vuet from 'vuet'
 
 Vue.use(Vuet)
+
 import router from './router'
 import './plugins/element.js'
 
@@ -55,19 +62,3 @@ new Vue({
   vuet,
   render: h => h(App),
 }).$mount('#app')
-
-
-// function A (name = '小屁孩') {
-//   this.name = name
-// }
-
-
-
-// function B (sex) {
-//   A.call(this)
-//   this.sex = sex
-// }
-
-// B.prototype = Object.create(A.prototype)
-// B.prototype.constructor = B
-// console.log(new B('男'))
