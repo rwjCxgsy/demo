@@ -1,6 +1,6 @@
 /*
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-11 16:04:14
+ * @LastEditTime: 2020-06-11 16:51:18
  * @Description: 
  * @FilePath: /demo/src/router.js
  */ 
@@ -25,7 +25,7 @@ export default new vueRouter({
         },
         {
             path: '/cdsub',
-            component: () => import('./views/cdsub'),
+            component: () => import('./views/subway/index'),
         },
         {
             path: '/sheet',
@@ -34,10 +34,6 @@ export default new vueRouter({
         {
             path: '/fall',
             component: () => import('./views/fall/index'),
-        },
-        {
-            path: '/edit',
-            component: () => import('./views/edit/index.vue'),
         }
     ]
 })

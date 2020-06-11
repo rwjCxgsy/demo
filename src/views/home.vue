@@ -1,11 +1,16 @@
+<!--
+ * @Author: renweijun@doctorwork.com
+ * @LastEditTime: 2020-06-11 16:52:00
+ * @Description: 
+ * @FilePath: /demo/src/views/home.vue
+--> 
 <template>
     <div class="home">
         <div class="utils">
             <XgButton @click="jump('/cdsub', $event)">成都地图</XgButton>
             <XgButton @click="jump('/range')">日期选择器</XgButton>
             <XgButton @click="jump('/fall')">fall</XgButton>
-            <XgButton @click="jump('/three')">3d</XgButton>
-            <XgButton @click="jump('/edit')">canvas打字</XgButton>
+            <XgButton @click="jump('/sheet')">表单合并</XgButton>
             <!-- <div class="box"></div> -->
         </div>
     </div>
