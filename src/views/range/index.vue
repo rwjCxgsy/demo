@@ -1,3 +1,9 @@
+<!--
+ * @Author: renweijun@doctorwork.com
+ * @LastEditTime: 2020-06-11 16:03:55
+ * @Description: 
+ * @FilePath: /demo/src/views/range/index.vue
+--> 
 <template>
     <div class="range">
         <button @click="() => {show = true}">打开</button>

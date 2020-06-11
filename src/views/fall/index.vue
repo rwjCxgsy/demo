@@ -1,3 +1,9 @@
+<!--
+ * @Author: renweijun@doctorwork.com
+ * @LastEditTime: 2020-06-11 16:01:36
+ * @Description: 
+ * @FilePath: /demo/src/views/fall/index.vue
+--> 
 <template>
   <div class="fall">
       <canvas id="canvas" ref="canvas"></canvas>
@@ -98,6 +104,9 @@ class Fall {
 
 export default {
     name: 'fall',
+    head: {
+        title: '自由下落'
+    },
     mounted () {
         new Fall(this.$refs.canvas)
     }

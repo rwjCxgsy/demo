@@ -1,6 +1,6 @@
 /*
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-11 13:25:47
+ * @LastEditTime: 2020-06-11 16:04:14
  * @Description: 
  * @FilePath: /demo/src/router.js
  */ 
@@ -17,7 +17,7 @@ export default new vueRouter({
         },
         {
             path: '/range',
-            component: () => import('./views/range'),
+            component: () => import('./views/range/index'),
         },
         {
             path: '/home',
@@ -31,18 +31,10 @@ export default new vueRouter({
             path: '/sheet',
             component: () => import('./views/sheet/index'),
         },
-        // {
-        //     path: '/scroll',
-        //     component: () => import('./views/scroll'),
-        // },
         {
             path: '/fall',
-            component: () => import('./views/fall'),
+            component: () => import('./views/fall/index'),
         },
-        // {
-        //     path: '/three',
-        //     component: () => import('./views/three'),
-        // },
         {
             path: '/edit',
             component: () => import('./views/edit/index.vue'),
