@@ -1,6 +1,6 @@
 <!--
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-12 15:52:03
+ * @LastEditTime: 2020-06-15 18:48:44
  * @Description:
  * @FilePath: /demo/src/views/home.vue
 -->
@@ -11,7 +11,7 @@
       <XgButton @click="jump('/range')">日期选择器</XgButton>
       <XgButton @click="jump('/fall')">fall</XgButton>
       <XgButton @click="jump('/sheet')">表单合并</XgButton>
-      <XgButton @click="jump('/edit')">简易canvas</XgButton>
+      <XgButton @click="jump('/edit')">简易ps</XgButton>
       <!-- <div class="box"></div> -->
     </div>
   </div>

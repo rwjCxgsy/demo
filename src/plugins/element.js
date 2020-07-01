@@ -1,6 +1,6 @@
 /*
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-12 10:07:43
+ * @LastEditTime: 2020-06-12 18:06:01
  * @Description:
  * @FilePath: /demo/src/plugins/element.js
  */
@@ -16,7 +16,8 @@ import {
   Row,
   Col,
   Header,
-  Divider
+  Divider,
+  Dialog
 } from "element-ui";
 
 console.log("注册");
@@ -29,4 +30,5 @@ Vue.use(Row);
 Vue.use(Col);
 Vue.use(Header);
 Vue.use(Divider);
+Vue.use(Dialog);
 Vue.prototype.$message = Message;

@@ -1,17 +1,18 @@
 /*
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-12 15:48:15
+ * @LastEditTime: 2020-06-15 18:11:04
  * @Description:
  * @FilePath: /demo/src/views/edit/core/node/index.js
  */
 
 import Mouse from "../mouse";
+import { devicePixelRatio } from "../utils";
 
 const defaultOption = {
   width: 100,
   height: 100,
-  left: 100,
-  top: 100
+  left: 100 * devicePixelRatio,
+  top: 100 * devicePixelRatio
 };
 
 let ZIndex = 0;
@@ -56,6 +57,7 @@ class Node {
       options: { left, top, width, height }
     } = this;
     const { layerX, layerY } = Mouse;
+    console.log(left, top, layerX, layerY);
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(left, top);
@@ -63,7 +65,10 @@ class Node {
     ctx.lineTo(left + width, top + height);
     ctx.lineTo(left, top + height);
     ctx.closePath();
-    const isInPath = ctx.isPointInPath(layerX, layerY);
+    const isInPath = ctx.isPointInPath(
+      layerX * devicePixelRatio,
+      layerY * devicePixelRatio
+    );
     ctx.restore();
     return isInPath;
   }
@@ -72,8 +77,8 @@ class Node {
     const { mouseOffsetX, mouseOffsetY, active } = this;
     const { layerX, layerY } = Mouse;
     if (active) {
-      this.options.left = layerX - mouseOffsetX;
-      this.options.top = layerY - mouseOffsetY;
+      this.options.left = layerX * devicePixelRatio - mouseOffsetX;
+      this.options.top = layerY * devicePixelRatio - mouseOffsetY;
     }
     this.dashOffset++;
     if (this.dashOffset > 16) {
@@ -82,10 +87,10 @@ class Node {
     this.drawNode();
   }
   enActive() {
-    const { layerX, layerY } = Mouse;
+    let { layerX, layerY } = Mouse;
     this.active = true;
-    this.mouseOffsetX = layerX - this.options.left;
-    this.mouseOffsetY = layerY - this.options.top;
+    this.mouseOffsetX = layerX * devicePixelRatio - this.options.left;
+    this.mouseOffsetY = layerY * devicePixelRatio - this.options.top;
   }
   deActive() {
     this.active = false;
