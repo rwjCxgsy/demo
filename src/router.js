@@ -1,6 +1,6 @@
 /*
  * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-15 18:54:24
+ * @LastEditTime: 2020-07-21 18:19:36
  * @Description:
  * @FilePath: /demo/src/router.js
  */
@@ -43,6 +43,10 @@ export default new vueRouter({
     {
       path: "/canvasInput",
       component: () => import("./views/canvasInput/index")
+    },
+    {
+      path: "/pipeline",
+      component: () => import("./views/pipeline/index")
     }
   ]
 });

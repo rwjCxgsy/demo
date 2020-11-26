@@ -1,43 +1,50 @@
-<!--
- * @Author: renweijun@doctorwork.com
- * @LastEditTime: 2020-06-11 16:03:55
- * @Description: 
- * @FilePath: /demo/src/views/range/index.vue
---> 
 <template>
-    <div class="range">
-        <button @click="() => {show = true}">打开</button>
-        <Range v-model="show" :date-range="dateRange" @change="onChange" may-day="30"/>
-        <p>选择了</p>
-        <ul>
-            <li v-for="(item, i) in list" :key="i">{{item}}</li>
-        </ul>
-    </div>
+  <div class="range">
+    <button
+      @click="
+        () => {
+          show = true;
+        }
+      "
+    >
+      打开
+    </button>
+    <Range
+      v-model="show"
+      :date-range="dateRange"
+      @change="onChange"
+      may-day="30"
+    />
+    <p>选择了</p>
+    <ul>
+      <li v-for="(item, i) in list" :key="i">{{ item }}</li>
+    </ul>
+  </div>
 </template>
 
 <script>
-import Range from 'vue-time-range-picker'
+import Range from "./picker";
 export default {
-    name: 'range',
-    components: {Range},
-    data () {
-        return {
-            show: false,
-            list: [],
-            dateRange: []
-        }
-    },
-    methods: {
-        onChange (data) {
-            console.log(data)
-            this.list = data.list
-        }
+  name: "range",
+  components: { Range },
+  data() {
+    return {
+      show: false,
+      list: [],
+      dateRange: []
+    };
+  },
+  methods: {
+    onChange(data) {
+      console.log(data);
+      this.list = data.list;
     }
-}
+  }
+};
 </script>
 
 <style lang="less" scoped>
-    .range {
-        text-align: center;
-    }
+.range {
+  text-align: center;
+}
 </style>
