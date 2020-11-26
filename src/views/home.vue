@@ -11,7 +11,7 @@
       <XgButton @click="jump('/range')">日期选择器</XgButton>
       <XgButton @click="jump('/fall')">fall</XgButton>
       <XgButton @click="jump('/sheet')">表单合并</XgButton>
-      <XgButton @click="jump('/edit')">简易ps</XgButton>
+      <!-- <XgButton @click="jump('/edit')">简易ps</XgButton> -->
       <!-- <div class="box"></div> -->
     </div>
   </div>
